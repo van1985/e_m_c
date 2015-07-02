@@ -1,0 +1,37 @@
+/**
+ * Application mixins
+ */
+
+@mixin input-button {
+	border: 2px solid $emc-blue;
+	border-radius: 0;
+	background-color: transparent;
+	font-family: $font-family-sans-serif;
+	text-transform: uppercase;
+	pointer-events: auto;
+
+	&.disabled,
+	&[disabled] {
+		opacity: 0.5;
+	}
+}
+
+@mixin column-no-width {
+	position: relative;
+	float: left;
+	min-height: 1px;
+	padding-left:  ($grid-gutter-width / 2);
+	padding-right: ($grid-gutter-width / 2);
+}
+
+
+@mixin sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0,0,0,0);
+	border: 0;
+}

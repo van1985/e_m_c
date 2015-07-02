@@ -1,0 +1,19 @@
+/**
+ * Application footer
+ */
+
+.app-footer {
+	@media(max-width: $screen-xs-max) {
+		.xs-filters-open + .app-content + &,
+		.xs-search-open + .app-content + & {
+			display: none;
+		}
+	}
+	div {
+		margin: 0 auto;
+		padding: 30px 15px 15px;
+		max-width: $container-lg;
+		@include container-fixed();
+		font-size: 0.85em;
+	}
+}

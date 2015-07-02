@@ -1,0 +1,96 @@
+/**
+ * External CSS overrides
+ */
+
+body {
+	&.small {
+		font-size: $font-size-base;
+	}
+	&.responsive-page {
+		@media (min-width: $emc-screen-sm-min + 1) and (max-width: $emc-screen-sm-max) {
+			padding-top: 41px;
+		}
+		@media (max-width: $emc-screen-sm-max) {
+			padding-top: 44px;
+		}
+	}
+}
+ul {
+	margin-left: 0;
+}
+#header {
+	width: 100% !important;
+	max-width: $container-lg;
+	padding: 0 15px;
+	z-index: 1060 !important;
+
+	.searchFormWrapper {
+		@media (min-width: $screen-lg-min) {
+			width: 239px;
+		}
+	}
+	#navigation {
+		#headerRight {
+			@include box-sizing(content-box);
+		}
+	}
+}
+#dropDownIndicatorInner,
+#dropDownsInner {
+	width: auto;
+	max-width: $container-lg;
+}
+#dropDowns {
+	z-index: 1050;
+
+	* {
+		@include box-sizing(content-box);
+	}
+	h4, h6, p {
+		margin: 0;
+	}
+	.dropdownRightPromo h6 {
+		margin: 0;
+		font-weight: 600;
+	}
+}
+.providers-content .detail {
+	a,
+	a:link,
+	a:hover,
+	a:focus,
+	a:visited {
+		color: $emc-blue;
+	}
+	a:hover,
+	a:focus {
+		text-decoration: underline;
+	}
+	.resources + ul li a:after:hover,
+	.resources + ul li a:after:focus {
+		text-decoration: none;
+	}
+}
+#inboundBar {
+	top: 235px !important;
+
+	.ib-slider-wrapper {
+		top: 0 !important;
+	}
+}
+.inboundBar * {
+	@include box-sizing(content-box);
+}
+#footer #footerTopRow,
+#footer #footerBottomRow,
+#footerSeoBlock,
+#eeoBlock,
+#footerDock,
+#footer > .copyRight {
+	width: 100%;
+	max-width: $container-lg;
+}
+#footer #footerSeoBlock {
+	padding-right: 10px;
+	padding-left: 10px;
+}

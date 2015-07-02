@@ -1,0 +1,1004 @@
+/**
+ * Application header: navigation, filters, name search
+ */
+
+.app-header,
+.filters .filters-primary > div:first-child,
+.filters .filters-secondary > div:first-child,
+.filters .tab-pane {
+	@media (min-width: $screen-lg-min) {
+		max-width: $container-lg;
+	}
+	@include container-fixed();
+}
+
+.app-nav {
+	@media (min-width: $screen-sm-min) {
+		background: url('#{$image-path}bkgrnd_app_header_pattern_full.jpg') no-repeat 50% 0 transparent;
+	}
+
+	&.ui-scrollfix {
+		position: fixed;
+		@media (min-width: $screen-sm-min) {
+		    top: 50px;
+		    width: 100%;
+		    z-index: 1030;
+		}
+		@media (min-width: $screen-sm-min) and (max-width: $emc-screen-sm-max) {
+			top: 44px;
+			z-index: 960;
+		}
+		@media (max-width: $screen-xs-max) {
+			top: 44px;
+			width: 100%;
+			z-index: 960;
+		}
+	}
+}
+
+.app-header {
+	padding-top: 20px;
+	@media (max-width: $screen-xs-max) {
+		padding-right: 0;
+		padding-left: 0;
+		max-height: 100px;
+		background: url('#{$image-path}bkgrnd_app_header_pattern_full.jpg') no-repeat 50% 0 transparent;
+		overflow: hidden;
+		@include transition(max-height 0.5s linear);
+	}
+	@media (min-width: $screen-sm-min) {
+		margin-bottom: 10px;
+	}
+
+	& > div {
+		@media (min-width: $screen-sm-min) {
+			@include make-row();
+		}
+	}
+	.ui-scrollfix > & {
+		@media (min-width: $screen-sm-min) {
+			height: 81px;
+			margin-bottom: 0;
+		}
+
+		> div {
+			@media (min-width: $emc-screen-md-min) {
+				position: fixed;
+				top: 50px;
+			}
+
+			@media (min-width: $screen-sm-min) {
+				.app-title h1 {
+					white-space: nowrap;
+				}
+				.app-title h2,
+				.app-search {
+					display: none;
+				}
+			}
+		}
+	}
+	.app-title,
+	.app-search {
+		@media (min-width: $screen-sm-min) {
+			@include column-no-width;
+		}
+	}
+	.app-title {
+		@media (min-width: $screen-sm-min) {
+			width: percentage(7 / $grid-columns);
+		}
+		@media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+			width: percentage(6 / $grid-columns);
+		}
+		color: #fff;
+
+		h1 {
+			text-transform: uppercase;
+
+			@media (min-width: $screen-sm-min) {
+				font-size: 1.95em;
+				margin-top: 25px;
+				font-family: $font-family-display;
+			}
+			@media (min-width: $screen-lg-min) {
+				font-size: 1.75em;
+			}
+		}
+		h2 {
+			@media (max-width: $screen-xs-max) {
+				text-transform: uppercase;
+
+				.sm-min {
+					display: none;
+				}
+			}
+			@media (min-width: $screen-sm-min) {
+				margin: 0;
+				font-weight: normal;
+				font-size: 1.2em;
+				color: white;
+
+				.xs-max,
+				& + span {
+					display: none;
+				}
+			}
+		}
+	}
+	.app-search {
+		@media (min-width: $screen-sm-min) {
+			width: percentage(5 / $grid-columns);
+			margin-top: 20px;
+		}
+		@media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+			width: percentage(6 / $grid-columns);
+		}
+
+		@media (min-width: $screen-sm-min) {
+			.app-typeahead,
+			.app-reset {
+				position: relative;
+				min-height: 1px;
+				margin-left: 20px;
+			}
+			.app-typeahead {
+				width: percentage(8 / $grid-columns);
+			}
+			.app-reset {
+				width: percentage(2 / $grid-columns);
+			}
+			label {
+				@include sr-only;
+
+				+ span {
+					display: none;
+				}
+			}
+		}
+		@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+			.app-typeahead,
+			.app-reset {
+				float: right;
+				clear: both;
+				margin-bottom: 7.5px;
+			}
+			.app-reset {
+				width: auto;
+			}
+		}
+		@media (max-width: $screen-sm-max) {
+			.app-typeahead {
+				margin-left: 0;
+			}
+		}
+		@media (min-width: $screen-md-min) {
+			.app-typeahead,
+			.app-reset {
+				float: left;
+			}
+		}
+
+		input,
+		button {
+			font-size: 95%;
+			color: #fff;
+			background: none;
+		}
+		input.is-empty {
+			text-transform: uppercase;
+		}
+		input {
+			border-color: #aaa;
+			font-family: $font-family-sans-serif-2;
+			@include placeholder(#fff);
+
+			&,
+			&:focus,
+			&[aria-expanded=true] {
+				@include box-shadow(none);
+			}
+			&:focus,
+			&[aria-expanded=true] {
+				color: #555;
+				@include placeholder(#555);
+				background-color: #fff;
+			}
+			@media (min-width: $screen-sm-min) {
+				&[aria-expanded=true] {
+					border-bottom: 0 none;
+					border-radius: 4px 4px 0 0;
+					@include box-shadow(none);
+				}
+			}
+		}
+		.form-control-feedback {
+			top: 0;
+			right: 5px;
+			color: #fff;
+		}
+		input:focus + .dropdown-menu + .form-control-feedback,
+		input[aria-expanded=true] + .dropdown-menu + .form-control-feedback {
+			color: #555;
+		}
+		button {
+			@include input-button;
+			font-family: $font-family-sans-serif-2;
+
+			@media (max-width: $screen-xs-max) {
+				.sm-min {
+					display: none;
+				}
+			}
+			@media (min-width: $screen-sm-min) {
+				.xs-max {
+					display: none;
+				}
+			}
+		}
+	}
+	@media (max-width: $screen-xs-max) {
+		.app-title h1,
+		.app-title h2,
+		.app-search .form-group label,
+		.app-search .form-group input,
+		.app-search .form-group .form-control-feedback,
+		.app-search .form-group .dropdown-menu,
+		.app-search .form-group button,
+		.app-search .form-group .xs-max span {
+			display: none;
+		}
+		.app-title h1,
+		.app-title h2,
+		.app-search .form-group label,
+		.xs-nav-open & .app-search .form-group button {
+			position: relative;
+			width: 100%;
+			max-width: none;
+			padding: 20px 15px;
+			color: #fff;
+			text-align: left;
+			font-family: $font-family-sans-serif;
+			font-size: 1em;
+			background-color: rgba(0, 0, 0, 0.4);
+			border: none;
+			border-bottom: 1px solid #aaa;
+			@include opacity(1);
+			@include user-select(none);
+
+			&:hover,
+			&:focus {
+				cursor: pointer;
+				outline: none;
+			}
+			.xs-max span + span {
+				display: inline;
+			}
+		}
+		.app-title h1 {
+			display: block;
+			padding-right: 3em;
+			line-height: 1.2;
+			background: none;
+			font-size: 1.15em;
+		}
+		.app-title h2,
+		.app-search .form-group label {
+			font-weight: normal;
+		}
+		.app-search .form-group label {
+			text-transform: uppercase;
+		}
+		.app-title h1,
+		.app-title h2,
+		.app-search .form-group,
+		.app-search .form-group label {
+			margin: 0;
+		}
+		.xs-nav-open & .app-title h2,
+		.xs-nav-open & .app-search .form-group label,
+		.xs-nav-open & .app-search .form-group button,
+		.xs-search-open & .app-search .form-group label,
+		.xs-search-open & .app-search .form-group button,
+		.xs-filters-open & .app-title h2,
+		.xs-filters-open & .app-search .form-group button {
+			display: block;
+		}
+		.app-title h1:after,
+		.app-title h2:after,
+		.app-search .form-group label:after {
+			display: inline-block;
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: 70px;
+			height: 100%;
+			padding: 2em 0;
+			text-align: center;
+			font-family: 'Glyphicons Halflings';
+			font-style: normal;
+			font-size: 80%;
+			font-weight: normal;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			content: "\e080";
+		}
+		.app-title h1:after {
+			padding: 1.7em 0;
+			content: "\e114";
+		}
+	}
+}
+
+@media (max-width: $screen-xs-max) {
+	.xs-nav-open {
+		.app-header {
+			max-height: 500px;
+
+			.app-title h1 {
+				padding-right: 4.5em;
+
+				&:after {
+					content: "\e113";
+					background-color: rgba(0, 0, 0, 0.4);
+				}
+			}
+		}
+	}
+	.xs-search-open {
+		min-height: 500px;
+		padding-bottom: 10px;
+		background: #eee;
+
+		&.ui-scrollfix {
+			position: inherit;
+			width: inherit;
+			z-index: inherit;
+		}
+		.app-header {
+			max-height: none;
+			overflow: visible;
+			background: rgba(0, 0, 0, 0.85);
+			@include transition(none);
+		}
+		.app-header .app-title,
+		> .filters,
+		+ .app-content {
+			display: none;
+		}
+		.app-search {
+			position: relative;
+			z-index: 900;
+
+			.form-group {
+				&.app-reset {
+					position: absolute;
+					top: 13px;
+					right: 20px;
+				}
+				label {
+					padding: 20px 15px 20px 40px;
+					width: auto;
+					max-width: 0;
+					border-bottom: none;
+					background: none;
+
+					&:after {
+						content: "\e079";
+						right: auto;
+						left: 0;
+						width: auto;
+						padding-left: 20px;
+					}
+					+ span {  // FIX: Hide from screen readers
+						display: inline-block;
+						width: 100%;
+						padding: 15px 20px;
+						font-family: $font-family-sans-serif-2;
+						font-size: 1.25em;
+						text-transform: uppercase;
+						color: $emc-blue;
+						background: #fff;
+					}
+				}
+				input {
+					display: block;
+					position: absolute;
+					top: 135px;
+					width: 94%;
+					margin: 0 3%;
+					color: #555;
+					@include placeholder(#555);
+					z-index: 1050;
+
+					&:focus,
+					&[aria-expanded=true] {
+						background: none;
+					}
+				}
+				.dropdown-menu {
+					position: relative;
+					top: 0 !important;
+					left: 0 !important;
+					width: 100%;
+					max-height: none;
+					margin: 0;
+					padding-top: 75px;
+					padding-bottom: 20px;
+					clear: both;
+					background: #eee;
+					border: none;
+					border-radius: 0;
+					overflow: visible;
+					z-index: 1040;
+
+					li {
+						margin: 0 15px;
+						background: #fff;
+
+						a {
+							margin: 0 1.5em;
+							padding: 1.5em 0;
+							border-top: 1px solid #aaa;
+						}
+						&:first-child a {
+							border-top: none;
+						}
+					}
+					> .active > a,
+					> .active > a:hover,
+					> .active > a:focus {
+						color: inherit;
+						background-color: transparent;
+					}
+				}
+				.form-control-feedback {
+					display: block;
+					top: 135px;
+					right: 20px;
+					color: #555;
+					z-index: 1050;
+				}
+				button {
+					display: block;
+
+					.xs-max span:first-child {
+						display: inline;
+					}
+				}
+			}
+		}
+	}
+}
+
+.filters {
+	position: relative;
+	clear: both;
+	height: auto;
+	@media (max-width: $screen-xs-max) {
+		display: none;
+	}
+
+	.ui-scrollfix > & {
+		@media (min-width: $screen-sm-min) {
+			display: none;
+		}
+	}
+	.nav-tabs {
+		border-bottom: 0;
+
+		> li {
+			background: none no-repeat -100% -100%;
+			border-right: 1px solid #aaa;
+			vertical-align: middle;
+		}
+		> li:first-child {
+			border-left: 1px solid #aaa;
+		}
+		> li.active {
+			background-color: $emc-blue;
+		}
+		> li > a {
+			margin-right: 0;
+			padding: 10px;
+			border: none;
+			border-radius: 0;
+			background-color: transparent;
+			line-height: 1.2em;
+			color: #fff;
+			cursor: pointer;
+			@include user-select(none);
+		}
+		> li.active > a,
+		> li.active > a:hover,
+		> li.active > a:focus {
+			border: none;
+			background-color: transparent;
+			color: #fff;
+		}
+	}
+	.filters-primary > div:first-child,
+	.filters-secondary > div:first-child {
+		@media (min-width: $screen-sm-min) {
+			margin-left: auto !important;  // FIX: Move XSmall screen overrides to ng-style
+		}
+	}
+	.filters-primary {
+		.nav-tabs > li > a {
+			text-transform: uppercase;
+		}
+	}
+	.filters-secondary {
+		position: static;
+		text-transform: uppercase;
+
+		.nav-tabs {
+			@media (min-width: $screen-sm-min) {
+				position: absolute;
+				top: 50px;
+				max-width: $container-lg;
+				padding-right: ($grid-gutter-width / 2);
+				padding-left: ($grid-gutter-width / 2);
+				margin-left: (-$grid-gutter-width / 2);
+			}
+		}
+	}
+	.tab-content {
+		background-color: #eee;
+
+		&:before,
+		&:after {
+			content: " ";
+			display: table;
+		}
+		.tab-pane {
+			margin-top: 10px;
+			margin-bottom: 20px;
+			z-index: 1040;
+			@media (min-width: $screen-sm-min) {
+				position: relative;
+			}
+
+			&.animated {
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+			}
+		}
+		.btn-group {
+			width: 100%;
+			margin: 0 10px 10px 0;
+		}
+		.question {
+			@include make-sm-column(3);
+
+			p {
+				min-height: 90px;
+				margin: 10px 0;
+				padding: 10px 20px 10px 0;
+				font-family: $font-family-sans-serif-2;
+				font-size: 1.1em;
+				color: $emc-blue;
+				border-right: 1px solid #aaa;
+			}
+		}
+		.options,
+		.desc {
+			@include make-sm-column(4);
+		}
+		.desc p {
+			font-size: 0.95em;
+			margin: 10px 0;
+			padding: 25px;
+			background-color: #ddd;
+		}
+		.close {
+			margin: 20px;
+		}
+	}
+	.filters-primary .tab-content {
+		margin-top: 10px;
+
+		.is-secondary-open & {
+			@media (min-width: $screen-sm-min) {
+				margin-top: 70px;
+			}
+		}
+	}
+	.filter-title {
+		font-family: $font-family-sans-serif-2;
+		font-size: 1.4em;
+		color: $emc-blue;
+		text-transform: uppercase;
+	}
+	.dropdown-toggle {
+		width: 100%;
+		padding-right: 15px;
+		padding-left: 0;
+		overflow: hidden;
+		text-align: left;
+		border: 1px solid #aaa;
+		background-color: #fff;
+
+		&:active,
+		&.active {
+			@include box-shadow(none);
+		}
+		.dropdown-title {
+			display: inline-block;
+			float: left;
+			width: 91%;
+			margin-left: 15px;
+			padding-left: 1px;
+			overflow: hidden;
+		}
+		.caret {
+			margin-left: 2%;
+			border-width: 6px;
+			color: $emc-gray-light;
+		}
+	}
+	.btn-group.open {
+		.dropdown-title {
+			@include opacity(0.5);
+		}
+		.dropdown-toggle {
+			border-bottom: 0 none;
+			border-radius: 4px 4px 0 0;
+			@include box-shadow(none);
+		}
+	}
+}
+
+@media (max-width: $screen-xs-max) {
+	.xs-filters-open {
+		padding-bottom: 10px;
+		background: #eee;
+		position: relative;
+
+		&.ui-scrollfix {
+			position: inherit;
+			top: 0;
+			width: inherit;
+			z-index: inherit;
+		}
+		.app-header {
+			position: relative;
+			max-height: none;
+			overflow: visible;
+			background: rgba(0, 0, 0, 0.85);
+			@include transition(none);
+		}
+		.app-title h1,
+		.app-header .app-search .form-group:first-child,
+		+ .app-content {
+			display: none;
+		}
+		.app-title h2 {
+			padding: 20px 15px 20px 40px;
+			width: auto;
+			max-width: 0;
+			border-bottom: none;
+			background: none;
+
+			&:after {
+				content: "\e079";
+				right: auto;
+				left: 0;
+				width: auto;
+				padding-left: 20px;
+			}
+			+ span {  // FIX: Hide from screen readers
+				display: inline-block;
+				width: 100%;
+				padding: 15px 20px;
+				font-family: $font-family-sans-serif-2;
+				font-size: 1.25em;
+				text-transform: uppercase;
+				color: $emc-blue;
+				background: #fff;
+			}
+		}
+		.app-search {
+			.app-reset {
+				position: absolute;
+				top: 30px;
+				right: 20px;
+
+			}
+			button .xs-max span:first-child {
+				display: inline;
+			}
+		}
+		.filters {
+			position: relative;
+			display: block;
+			width: 100%;
+
+			.nav-tabs {
+				display: block;
+				clear: none;
+				width: auto;
+
+				> li {
+					width: 123px;
+					height: 142px;
+					margin-right: 5px;
+					border: none;
+					background: #000;
+					float: left;
+
+					&.parent-false {
+						display: none;
+					}
+					a:hover {
+						cursor: all-scroll;
+					}
+				}
+			}
+			.tab-content {
+				position: relative;
+				margin-top: 20px;
+				padding-right: 20px;
+				padding-left: 20px;
+				background: none;
+				z-index: 990;
+
+				.question p {
+					min-height: 0;
+					padding: 20px 15px 10px;
+					border-right: none;
+					text-transform: uppercase;
+				}
+				.options {
+					padding: 0;
+				}
+				.close,
+				.filter-title,
+				.desc,
+				.form-type-select .dropdown-toggle,
+				.form-type-checkboxes .dropdown-toggle {
+					display: none;
+				}
+				.form-type-select .btn-group
+				.form-type-checkboxes .btn-group {
+					margin: 0 0 10px;
+
+					+ .btn-group {
+						margin-top: 40px;
+					}
+				}
+				.form-type-select_cascade .btn-group {
+					+ .btn-group {
+						margin-top: 15px;
+					}
+					> .dropdown-toggle {
+						width: 91%;
+						margin: 0 4.5% 10px;
+						padding-right: 0;
+						border-bottom: 1px solid #aaa;
+						border-radius: 4px;
+						@include clearfix();
+
+						.dropdown-title {
+							width: 88%;
+						}
+					}
+				}
+				.form-type-select .dropdown-menu,
+				.form-type-checkboxes .dropdown-menu {
+					display: block;
+				}
+				.dropdown-menu {
+					position: relative;
+					top: 0 !important;
+					left: 0 !important;
+					width: 100%;
+					max-height: none;
+					margin: 0;
+					padding-top: 0;
+					padding-bottom: 0;
+					clear: both;
+					border: none;
+					border-radius: 0;
+					overflow: visible;
+					z-index: 1040;
+
+					li {
+						padding: 0 30px;
+
+						&:hover,
+						&.active {
+							background-color: $emc-blue;
+							cursor: pointer;
+
+							a,
+							a:focus {
+								color: #fff;
+							}
+							+ li a {
+								border-top-color: transparent;
+							}
+						}
+						a {
+							padding: 20px 0;
+							border-top: 1px solid #aaa;
+
+							&:focus {
+								background-color: inherit;
+								color: inherit;
+								outline: none;
+							}
+						}
+
+					}
+				}
+				.form-type-select_cascade .dropdown-menu li:first-child a {
+					border-top-color: transparent;
+				}
+				.checkboxes {
+					margin: 0 0 10px;
+					padding: 0 30px;
+
+					.checkbox {
+						display: block;
+						width: 100%;
+						margin: 0;
+						padding: 20px 0;
+						border-top: 1px solid #aaa;
+						text-align: left;
+
+						&:hover + .checkbox
+						&:focus + .checkbox {
+							border-top-color: transparent;
+						}
+						&:hover,
+						&:focus,
+						&:hover:before,
+						&:hover:after,
+						&.active,
+						&.active:before,
+						&.active:after {
+							color: #fff;
+							background-color: $emc-blue;
+						}
+						&:hover:before,
+						&:hover:after,
+						&.active:before,
+						&.active:after {
+							position: absolute;
+							top: -1px;
+							display: block;
+							padding: 30px 15px;
+							border-top: 1px solid transparent;
+							content: "";
+							cursor: pointer;
+						}
+						&:hover:before,
+						&.active:before {
+							left: -30px;
+						}
+						&:hover:after,
+						&.active:after {
+							right: -30px;
+						}
+						&.disabled,
+						&[disabled],
+						&.disabled:hover:before,
+						&.disabled:hover:after,
+						&[disabled]:hover:before,
+						&[disabled]:hover:after {
+							color: #ccc;
+							background-color: transparent;
+							@include opacity(1);
+						}
+						.glyphicon {
+							display: none;
+						}
+					}
+				}
+			}
+			.tab-pane {
+				margin-top: 0;
+				padding: 0;
+				background: #fff;
+
+				&.animated {
+					-webkit-animation-duration: 0s;
+					animation-duration: 0s;
+				}
+				&.active {
+					&:before {
+						content: " ";
+						position: absolute;
+						display: block;
+						top: -41px;
+						left: 74px;
+						width: 0;
+						height: 0;
+						border: 0 solid transparent;
+						border-width: $popover-arrow-outer-width;
+						border-bottom-color: #efefef;
+					}
+					&.fadeInDown:before {
+						-webkit-transform: translate3d(
+							-$popover-arrow-outer-width * 2, -$popover-arrow-outer-width, 0
+						);
+						transform: translate3d(
+							-$popover-arrow-outer-width * 2, -$popover-arrow-outer-width, 0
+						);
+					}
+				}
+			}
+			.filters-primary,
+			.filters-secondary {
+				> div:first-child {
+					clear: none;
+					height: 162px;
+					margin: 0;
+					padding: 0;
+					overflow: hidden;
+					@include transition(margin 0.25s linear);
+				}
+				.nav-tabs {
+					height: 142px;
+					overflow: hidden;
+
+					> li {
+						background-color: #000;
+						background-position: 0 0;
+
+						a {
+							height: 100%;
+							margin-bottom: 0;
+							padding-top: 15px;
+							font-family: $font-family-sans-serif-2;
+							font-size: 1.05em;
+							text-align: left;
+							text-transform: none;
+
+							&:before {
+								content: "By ";
+							}
+						}
+						&.has_selected a:after {
+							position: absolute;
+							right: -10px;
+							bottom: -10px;
+							padding: 1.25em;
+							text-align: center;
+							font-family: 'Glyphicons Halflings';
+							font-size: 1.25em;
+							-webkit-font-smoothing: antialiased;
+							-moz-osx-font-smoothing: grayscale;
+							content: "\e013";
+						}
+					}
+				}
+			}
+			.filters-primary {
+				width: 100%;
+
+				> div:first-child {
+					padding-left: 20px;
+					background: #fff;
+				}
+			}
+			.filters-secondary {
+				background: none;
+
+				> div:first-child {
+					position: absolute;
+					top: 0;
+					left: 148px;
+				}
+				.nav-tabs {
+					width: 500%;
+				}
+				.tab-content {
+					margin-top: 0;
+					width: 100%;
+				}
+			}
+		}
+	}
+}
