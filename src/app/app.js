@@ -50,74 +50,13 @@ angular.module('emc_service_providers', [
 	function($scope, $filter, $q, $timeout, $modal, getResource, $location) {
 
 
-	function refresh(){
-
-	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
-	$scope.data.$promise.then(function() {
-		$scope.data.is_cpc = false;
-		var search         = window.location.search;
-		var params         = {};
-
-		if (search.indexOf('?cpc=') > -1 || search.indexOf('&cpc=') > -1) {
-			_( search.split('?')[1].split('&') ).forEach(function(param) {
-				params[param.split('=')[0]] = param.split('=')[1];
-			});
-
-			if (params.cpc && params.cpc === 'yes') {
-				$scope.data.is_cpc    = true;
-				$scope.data.providers = _.filter($scope.data.providers, {'cloud_partner_connect': 'Yes'});
-			}
-		}
-
-		$scope.data.filtered = {
-			'main':    {},
-			'search':  null,
-			'filters': {},
-			'counts':  {
-				'main':   $scope.data.providers.length,
-				'groups': [[], []]
-			}
-		};
-		$scope.data.selected = {
-			'filters':         {},
-			'filters_display': [],
-			'filters_options': {},
-			'filter_primary':  true,
-			'filter_active':   null,
-			'option_desc':     {},
-			'search':          null
-		};
-
-		$scope.applyFilters();
-		$scope.setFilterCSS();
-	});
-	}
-
-	refresh();
 
 	/* SECTION OF METHODS ADDED ON THE URL QUERY REFACTOR 
 	Surge - CSP Search Tool [Sprint °1] Task: B-37919 **/
 
 	// This function will get the filterParams on the URL to render specific search 
 
-	$scope.init = function(){
 
-
-		var query = $location.search();
-		var id = [];
-
-		$scope.addFilter('tier','platinum');
-		refresh();
-
-			//for(var key in query) {
-				//$scope.applyFilters(query);
-				//console.log(query[key]);
-				//return id;
-			//
-
-		console.log(query);
-		console.log($scope.data);
-	}; 
 
 	/* Listens to the locationChangeSuccess event,
 		once the event is emitted calls the function  
@@ -263,6 +202,12 @@ angular.module('emc_service_providers', [
 		angular.element(
 			document.querySelectorAll('.filters > div > div:first-child')
 		).css({'margin-left': '0px'});
+	
+/***************************************************/
+//Cache clean
+// lvanden
+		localStorage.cleanFilterCache();
+/**************************************************/
 	};
 
 	$scope.toggleReset = function() {
@@ -274,7 +219,64 @@ angular.module('emc_service_providers', [
 		}
 	};
 
-	$scope.addFilter = function(filter, option) {
+
+/**************************************************************************************************/
+// Author: lvanden
+// Date: 02/07/2015
+//Cache Filter
+
+function addFilterCache(filter,option){
+
+	var filterObject={
+		filter: filter,
+		option: option
+	};
+	//Ex. filter.id === 'tier'  || option.id === 'platinum'
+	localStorage.setItem(filter.id, JSON.stringify(filterObject));
+	localStorage.setItem('data', JSON.stringify($scope.data));
+}
+
+function getFilterCache(keyFilter){
+	return localStorage.getItem(keyFilter);
+}
+
+function removeFilterCache(filter,option){
+	localStorage.removeItem(filter.id);
+}
+
+function cleanFilterCache(){
+	localStorage.clear();
+}
+
+/*
+function parseQueryString = function( queryString ) {
+    var params = {}, queries, temp, i, l;
+ 
+    // Split into key/value pairs
+    queries = queryString.split("&");
+ 
+    // Convert the array of strings into an object
+    for ( i = 0, l = queries.length; i < l; i++ ) {
+        temp = queries[i].split('=');
+        params[temp[0]] = temp[1];
+    }
+ 
+    return params;
+};
+*/
+	//var id = [];
+
+	//$scope.addFilter('tier','platinum');
+	//refresh();
+
+
+//Call init
+
+
+/**************************************************************************************************/
+
+
+$scope.addFilter = function(filter, option) {
 
 console.log($scope.data);
 console.log(filter);
@@ -337,6 +339,13 @@ console.log(option);
 		}
 		$scope.toggleDetail();
 		$scope.applyFilters('update', this.item.id);
+
+		/**************************************************************************************************/
+		//Add filter to cache
+		if ( filter ){
+			addFilterCache(filter,option);
+		}
+		/**************************************************************************************************/
 	};
 
 	$scope.removeFilter = function(filter_id, option_id) {
@@ -929,4 +938,84 @@ $location.search(filter_id, null);
 			}
 		});
 	};
+
+
+/**************************************************************************************************/
+// Author: lvanden
+// Date: 02/07/2015
+//Cache Filter
+
+var selectFilterKeysOptions = ["service_offering", "tier", "market","cloud_hq_location"];
+
+	$scope.init = function(){
+
+	var queryParameters = $location.search();
+	//More performance with for than with arr.forEach
+	if (!jQuery.isEmptyObject(queryParameters)){
+		for (var i = 0, len = selectFilterKeysOptions.length; i < len; i++) {
+			var filterObject =  getFilterCache( selectFilterKeysOptions[i]);
+			filterObject = JSON.parse(filterObject);
+			if (filterObject){
+				var data = getFilterCache('data');
+				$scope.data = JSON.parse(data);
+				$scope.addFilter(filterObject.filter, filterObject.option);
+			}
+		}
+	}
+	else{
+		cleanFilterCache();
+	}
+	};
+
+/**************************************************************************************************/
+
+	function refresh(){
+	$scope.data = getResource.get({'resource': 'ServiceProviderSearchSpecArchive'});
+	$scope.data.$promise.then(function() {
+		$scope.data.is_cpc = false;
+		var search         = window.location.search;
+		var params         = {};
+
+		if (search.indexOf('?cpc=') > -1 || search.indexOf('&cpc=') > -1) {
+			_( search.split('?')[1].split('&') ).forEach(function(param) {
+				params[param.split('=')[0]] = param.split('=')[1];
+			});
+
+			if (params.cpc && params.cpc === 'yes') {
+				$scope.data.is_cpc    = true;
+				$scope.data.providers = _.filter($scope.data.providers, {'cloud_partner_connect': 'Yes'});
+			}
+		}
+
+		$scope.data.filtered = {
+			'main':    {},
+			'search':  null,
+			'filters': {},
+			'counts':  {
+				'main':   $scope.data.providers.length,
+				'groups': [[], []]
+			}
+		};
+		$scope.data.selected = {
+			'filters':         {},
+			'filters_display': [],
+			'filters_options': {},
+			'filter_primary':  true,
+			'filter_active':   null,
+			'option_desc':     {},
+			'search':          null
+		};
+
+		$scope.init();
+		$scope.applyFilters();
+		$scope.setFilterCSS();
+	});
+	}
+
+	refresh();
+
+
 }]);
+
+
+
