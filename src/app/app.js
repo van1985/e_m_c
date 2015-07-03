@@ -46,8 +46,8 @@ angular.module('emc_service_providers', [
 .run(function() {
 
 })
-.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location',
-	function($scope, $filter, $q, $timeout, $modal, getResource, $location) {
+.controller('AppCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv','$rootScope',
+	function($scope, $filter, $q, $timeout, $modal, getResource, $location,CacheSrv, $rootScope) {
 
 
 
@@ -203,11 +203,12 @@ angular.module('emc_service_providers', [
 			document.querySelectorAll('.filters > div > div:first-child')
 		).css({'margin-left': '0px'});
 	
-/***************************************************/
-//Cache clean
-// lvanden
-		localStorage.cleanFilterCache();
-/**************************************************/
+		/**************************************************************************************************/
+		//Remove filter from cache
+		//Author: lvanden
+		//Date: 02/07/2015
+		$rootScope.$broadcast('resetFilterCache');
+		/**************************************************************************************************/
 	};
 
 	$scope.toggleReset = function() {
@@ -220,33 +221,6 @@ angular.module('emc_service_providers', [
 	};
 
 
-/**************************************************************************************************/
-// Author: lvanden
-// Date: 02/07/2015
-//Cache Filter
-
-function addFilterCache(filter,option){
-
-	var filterObject={
-		filter: filter,
-		option: option
-	};
-	//Ex. filter.id === 'tier'  || option.id === 'platinum'
-	localStorage.setItem(filter.id, JSON.stringify(filterObject));
-	localStorage.setItem('data', JSON.stringify($scope.data));
-}
-
-function getFilterCache(keyFilter){
-	return localStorage.getItem(keyFilter);
-}
-
-function removeFilterCache(filter,option){
-	localStorage.removeItem(filter.id);
-}
-
-function cleanFilterCache(){
-	localStorage.clear();
-}
 
 /*
 function parseQueryString = function( queryString ) {
@@ -272,8 +246,6 @@ function parseQueryString = function( queryString ) {
 
 //Call init
 
-
-/**************************************************************************************************/
 
 
 $scope.addFilter = function(filter, option) {
@@ -342,8 +314,15 @@ console.log(option);
 
 		/**************************************************************************************************/
 		//Add filter to cache
-		if ( filter ){
-			addFilterCache(filter,option);
+		//Author: lvanden
+		//Date: 02/07/2015
+		if ( this.item ){
+			var transferObject={
+				data: $scope.data,
+				filter: this.item,
+				option: this.option
+			};
+			$rootScope.$broadcast('addFilterCache', JSON.stringify(transferObject));
 		}
 		/**************************************************************************************************/
 	};
@@ -355,6 +334,13 @@ console.log(option);
 		var selected_count = _.size(selected.filters);
 		var items_remove   = [];
 		var element_id     = 'filter-' + filter_id;
+
+		/**************************************************************************************************/
+		//Remove filter from cache
+		//Author: lvanden
+		//Date: 02/07/2015
+		$rootScope.$broadcast('removeFilterCache', filter_id);
+		/**************************************************************************************************/
 
 		$scope.toggleDetail();
 
@@ -443,6 +429,7 @@ console.log(option);
 				}
 			}
 		});
+
 	};
 
 	$scope.updateOptionsDisplay = function(this_filter, action, display_update) {
@@ -945,27 +932,34 @@ $location.search(filter_id, null);
 // Date: 02/07/2015
 //Cache Filter
 
-var selectFilterKeysOptions = ["service_offering", "tier", "market","cloud_hq_location"];
-
-	$scope.init = function(){
-
-	var queryParameters = $location.search();
+$scope.init = function(){
+	var initObject = CacheSrv.init($location.search());
+	if (initObject){ //is define
+		$scope.data = initObject.data;
+		for (var i = 0, len = initObject.filters.length; i < len; i++) {
+			var filterObject = initObject.filters[i];
+			$scope.addFilter(filterObject.filter, filterObject.option);
+		}
+	}
+	/*
+	var queryParameters = 
 	//More performance with for than with arr.forEach
 	if (!jQuery.isEmptyObject(queryParameters)){
 		for (var i = 0, len = selectFilterKeysOptions.length; i < len; i++) {
-			var filterObject =  getFilterCache( selectFilterKeysOptions[i]);
+			var filterObject =  CacheSrv.getFilterCache( selectFilterKeysOptions[i]);
 			filterObject = JSON.parse(filterObject);
 			if (filterObject){
-				var data = getFilterCache('data');
+				var data = CacheSrv.getFilterCache('data');
 				$scope.data = JSON.parse(data);
 				$scope.addFilter(filterObject.filter, filterObject.option);
 			}
 		}
 	}
 	else{
-		cleanFilterCache();
+		CacheSrv.cleanFilterCache();
 	}
-	};
+	*/
+};
 
 /**************************************************************************************************/
 
@@ -1005,6 +999,12 @@ var selectFilterKeysOptions = ["service_offering", "tier", "market","cloud_hq_lo
 			'option_desc':     {},
 			'search':          null
 		};
+
+/**************************************************************************************************/
+// Author: lvanden
+// Date: 02/07/2015
+//Cache Filter
+/**************************************************************************************************/
 
 		$scope.init();
 		$scope.applyFilters();
