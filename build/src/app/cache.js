@@ -39,7 +39,12 @@ angular.module('appFilters')
             localStorage.setItem(filter.id, JSON.stringify(filterObject));
         }
         else{
-            localStorage.setItem(filter.id+'_1', JSON.stringify(filterObject));
+            if (!localStorage.getItem(filter.id+'_1')){
+                localStorage.setItem(filter.id+'_1', JSON.stringify(filterObject));
+            }
+            else{
+                localStorage.setItem(filter.id+'_2', JSON.stringify(filterObject));
+            }
         }
     };
 
