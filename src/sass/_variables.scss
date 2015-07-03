@@ -1,0 +1,37 @@
+/**
+ * Application variables
+ */
+
+//== Media query breakpoints
+$emc-screen-sm-min: 640px;  // EMC small screen or tablet
+$emc-screen-md-min: 980px;  // EMC medium screen or desktop
+$emc-screen-xs-max: ($emc-screen-sm-min - 1);
+$emc-screen-sm-max: ($emc-screen-md-min - 1);
+
+
+//== Typography
+//LOCAL PATH
+$icon-font-path: "/assets/";
+//FW PATH
+//$icon-font-path: "/fonts/bootstrap/";
+$font-family-sans-serif-2: "ff-meta-web-pro", "Avenir Next Condensed", Arial, sans-serif;
+$font-family-display: "Architects Daughter";
+
+
+//== Images
+// FW PATH
+//$image-path: "/images/service-provider-search/"; 
+
+// LOCAL PATH
+$image-path: "/assets/img/"; 
+
+
+//== Colors
+$emc-blue: #2C95DD;
+$emc-gray: #3D3D3D;
+$emc-gray-light: #4E5052;
+$emc-gray-lighter: #575757;
+
+
+//== Content 
+$provider-logo-container-width: 150px;

@@ -1,0 +1,144 @@
+/**
+ * Local dev Sass; not for production
+ */
+
+//== Bootstrap
+@import "../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/grid";
+// @import "../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/navbar";
+
+
+//== Variables
+$icon-font-path: "./";  // FIX: Build OK, compile... NOT
+$image-path: "img/";
+// $font-family-display: "architects_daughterregular";
+
+
+//== General
+code,
+pre,
+.pre {
+	padding: 5px;
+	margin: 10px 0;
+	background-color: #efefef;
+	border: 1px solid #dadada;
+	border-radius: 3px;
+}
+code {
+	padding: 0 3px;
+}
+pre {
+	margin: 10px 0;
+	padding: 5px;
+
+	&.log {
+		height: 250px;
+		white-space: normal;
+	}
+}
+
+
+//== Typography
+/* @font-face {
+	font: {
+		family: $font-family-display;
+		weight: normal;
+		style: normal;
+	}
+	src: url('/fonts/architects-daughter/architectsdaughter-webfont.eot');
+	src: url('/fonts/architects-daughter/architectsdaughter-webfont.eot?#iefix') format('embedded-opentype'),
+	 url('/fonts/architects-daughter/architectsdaughter-webfont.woff') format('woff'),
+	 url('/fonts/architects-daughter/architectsdaughter-webfont.ttf') format('truetype'),
+	 url('/fonts/architects-daughter/architectsdaughter-webfont.svg#architects_daughterregular') format('svg');
+} */
+
+
+//== Page Header
+/* .page-header {
+	height: 77px;
+	margin: 0;
+	padding-bottom: 0;
+	border: 0;
+	background-color: $emc-gray-light;
+} */
+
+
+//== Navigation
+/* .navbar {
+	@media (min-width: $screen-lg-min) {
+		max-width: $container-lg;
+	}
+	margin-top: 0;
+	margin-bottom: 0;
+	@include container-fixed();
+
+	small {
+		font-size: 60%;
+	}
+}
+
+.navbar-brand {
+	width: 91px;
+	height: 92px;
+	position: absolute;
+	top: 0;
+	text-indent: -9999px;
+	background-color: $emc-blue;
+	background-image: url('/images/header/header-sprites-2014.png');
+	background-position: 0 -906px !important;
+	background-repeat: no-repeat;
+}
+
+.navbar-nav {
+	margin: 40px 0 0 120px;
+	font-family: $font-family-sans-serif-2;
+
+	& > li > a {
+		padding-top: 0;
+		padding-bottom: 0;
+		outline: none;
+		font-size: 90%;
+		color: #fff;
+		text-transform: uppercase;
+
+		&:hover,
+		&:focus {
+			background: none;
+		}
+	}
+} */
+
+
+//== Footer
+/* .footer {
+	.footer-nav {
+		padding: 40px 0;
+		background-color: $emc-gray-lighter;
+
+		h6 {
+			font-size: 1.1em;
+			color: #fff;
+			text-transform: uppercase;
+		}
+		li {
+			color: #B8B8B8;
+		}
+		> div > div:first-child li {
+			line-height: 2;
+			text-transform: uppercase;
+		}
+		> div > div:not(:first-child) li {
+			font-size: 0.85em;
+			line-height: 1.6;
+		}
+	}
+	.footer-seo {
+		padding: 40px 0;
+		background-color: $emc-gray;
+		color: #B4B4B4;
+		font-size: 0.8em;
+
+		a {
+			color: inherit;
+		}
+	}
+} */

@@ -1,0 +1,69 @@
+<#assign freemarker=JspTaglibs["/WEB-INF/tld/freemarker.tld"]>
+
+<!DOCTYPE html>
+<!--[if lt IE 8]>
+	<html xmlns:ng="http://angularjs.org" class="no-js lt-ie8 lt-ie9 lt-ie10" id="ng-app" ng-app="emc_service_providers">
+<![endif]-->
+<!--[if IE 8]>
+	<html xmlns:ng="http://angularjs.org" class="no-js ie8 lt-ie9 lt-ie10" id="ng-app" ng-app="emc_service_providers">
+<![endif]-->
+<!--[if IE 9]>
+	<html xmlns:ng="http://angularjs.org" class="no-js ie9 lt-ie10" id="ng-app" ng-app="emc_service_providers">
+<![endif]-->
+<!--[if gt IE 9]><!-->
+	<html class="no-js" id="ng-app" ng-app="emc_service_providers">
+<!--<![endif]-->
+	<head>
+		<!--[if lte IE 8]>
+			<script>
+				document.createElement('ng-include');
+				document.createElement('ng-pluralize');
+				document.createElement('ng-view');
+				document.createElement('tabset');
+				document.createElement('tab');
+			</script>
+			<script src="/R1/assets/js/service-provider-search/html5shiv.js"></script>
+		<![endif]-->
+		<title>Cloud Service Provider Search | EMC</title>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		<meta name="description" content="EMC Cloud Service Provider Search">
+        <meta name="keywords" content="cloud computing, business cloud computing, cloud computing for business, itaas, emc, hybrid clouds, it as a service">
+
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Architects+Daughter" />
+		<link rel="stylesheet" href="/_admin/css/html-layout-css-includes-combined-min.css" />
+		<link rel="stylesheet" href="/R1/assets/css/common/responsive-header.css" />
+		<link rel="stylesheet" href="/R1/assets/css/common/responsive-footer.css" />
+		<link rel="stylesheet" href="/R1/assets/css/service-provider-search/app.css" />
+
+		<!--[if lte IE 8]>
+			<script src="/R1/assets/js/service-provider-search/respond.js"></script>
+		<![endif]-->
+
+		<script src="/_admin/js/jquery.js"></script>
+
+		<!--[if (!IE) | (gt IE 8)]><!-->
+			<script src="/R1/assets/js/service-provider-search/hammer.js"></script>
+		<!--<![endif]-->
+
+		<script src="/R1/assets/js/service-provider-search/app.js"></script>
+	</head>
+
+	<body class="responsive-page disable-header-notice">
+
+		<@freemarker.include virtual="/includes/responsive_header.inc" />
+
+		<main role="main" ng-view ui-scrollfix="-50"></main>
+
+		<@freemarker.include virtual="/includes/responsive_footer.inc" />
+
+		<script language="JavaScript"><!--
+			// if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+		//--></script>
+		<noscript>
+			<img src="//emc-emccom.122.2O7.net/b/ss/emc-emccom/1/H.1--NS/0" height="1" width="1" border="0" alt="" />
+		</noscript>
+	</body>
+ </html>

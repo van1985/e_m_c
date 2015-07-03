@@ -1,0 +1,317 @@
+<header class="page-nav">
+	<div class="navbar">
+		<a href="/" class="navbar-brand">EMC Corporation</a>
+		<a class="navbar-top dropup" ng-click="scrollTo()">Back to top <span class="caret"></span></a>
+	</div>
+</header>
+
+<div class="app-nav" ng-class="{'is-secondary-open': data.selected.filter_primary,
+	'xs-nav-open': data.selected.xs_nav_open, 'xs-search-open': data.selected.xs_search_open,
+	'xs-filters-open': data.selected.xs_filters_open}" ui-scrollfix="-40">
+	<section class="app-header" data-ng-init="init()">
+		<div>
+			<div class="app-title">
+				<h1 ng-click="toggleXSmall('nav')">{{data.labels.header_app}}</h1>
+				<h2 ng-click="toggleXSmall('filters')">
+					<span class="sm-min">{{data.labels.header_filters.lg}}:</span>
+					<span class="xs-max">
+						{{data.selected.xs_filters_open || data.labels.header_filters.sm}}
+					</span>
+				</h2>
+				<span ng-show="data.selected.xs_filters_open">{{data.labels.header_filters.sm}}</span>
+			</div>
+
+			<form class="app-search">
+				<div class="form-group has-feedback app-typeahead">
+					<label for="name" ng-click="toggleXSmall('search')">
+						{{data.selected.xs_search_open || data.labels.search.sm}}
+					</label>
+					<span ng-show="data.selected.xs_search_open">{{data.labels.search.sm}}</span>
+					<input name="name" class="form-control" type="text" ng-model="data.selected.search"
+						typeahead="p as p.name for p in data.providers | filter:{name:$viewValue}"
+						typeahead-on-select="confirmAction('single')" placeholder="{{data.labels.search.lg}}"
+						ng-class="{'is-empty': !data.selected.search}" />
+					<span class="glyphicon glyphicon-search form-control-feedback"></span>
+				</div>
+				<div class="form-group app-reset">
+					<button type="button" class="btn" ng-class="{'disabled': toggleReset()}"
+						ng-disabled="toggleReset()" ng-click="resetFilters('all'); toggleDetail()">
+						<span class="sm-min">{{data.labels.reset.lg}}</span>
+						<span class="xs-max">
+							<span>{{data.labels.reset.lg}}</span>
+							<span>{{data.labels.reset.sm}}</span>
+						</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</section>
+
+	<section id="filters" class="filters" ui-scrollfix="-90">
+		<tabset justified="true" class="filters-primary">
+			<tab ng-repeat="item in data.filtered.filters" ng-if="!item.parent_display"
+				heading="{{item.title}}" active="item.active" id="filter-{{item.id}}"
+				class="parent-{{item.has_children}} {{item.has_selected}}" ng-style="item.css"
+				hm-panmove="slideFilters($event)" hm-panend="slideFilters($event)"
+				ng-click="toggleFilterLevel(); toggleDetail(); applyFilters('update', item.id); slideFilters($event)">
+
+				<button type="button" class="close"
+					ng-click="toggleDetail(); item.active = false; data.selected.filter_recent = null;
+						data.selected.filter_active = null">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+
+				<div class="question">
+					<p>{{item.question | trustHTML}}</p>
+				</div>
+
+				<div class="options form-type-{{item.form_type}}">
+					<h3 class="filter-title">{{item.title}}</h3>
+
+					<!-- Single-select -->
+					<div class="btn-group" ng-if="item.form_type == 'select'" dropdown>
+						<button type="button" class="btn dropdown-toggle" dropdown-toggle>
+							<span class="dropdown-title">
+								{{data.selected.filters_options[item.id][0] || 'Select One'}}
+							</span>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li ng-repeat="option in item.options track by option.id"
+								ng-class="{'disabled': option.disabled, 'active': data.selected.filters_options[item.id][0] == option.title}"
+								ng-click="confirmAction('add')">
+								<a>{{option.title}}</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Cascading single-selects -->
+					<div class="btn-group" ng-if="item.form_type == 'select_cascade'"
+						ng-repeat="option_group in item.options" dropdown>
+						<button type="button" class="btn dropdown-toggle" dropdown-toggle
+							ng-hide="$index > 0 && !item.options[$index][data.selected.filters[item.id][$index - 1]]">
+							<span class="dropdown-title">
+								{{data.selected.filters_options[item.id][$index] || item.form_select_title[$index]}}
+							</span>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" ng-if="$index == 0" ng-init="parent_idx = $index">
+							<li ng-repeat="option in option_group track by option.id"
+								ng-class="{'disabled': option.disabled, 'active': data.selected.filters_options[item.id][parent_idx] == option.title}"
+								ng-click="addFilter()">
+								<a>{{option.title}}</a>
+							</li>
+						</ul>
+						<ul class="dropdown-menu" ng-if="$index > 0" ng-init="parent_idx = $index">
+							<li ng-repeat="option in item.options[$index][data.selected.filters[item.id][$index - 1]] track by option.id"
+								ng-class="{'disabled': option.disabled, 'active': data.selected.filters_options[item.id][parent_idx] == option.title}"
+								ng-click="addFilter()">
+								<a>{{option.title}}</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Checkboxes -->
+					<div class="btn-group checkboxes" ng-if="item.form_type == 'checkbox'">
+						<button type="button" class="checkbox"
+							ng-repeat="option in item.options track by option.id" btn-checkbox
+							ng-model="data.selected.filters_options[item.id][option.id]"
+							ng-class="{'disabled': option.disabled}" ng-disabled="option.disabled"
+							ng-click="addFilter()">
+							<!-- this is the checkbox we chage the function called-->
+							<span class="glyphicon glyphicon-ok"></span> {{option.title}}
+						</button>
+					</div>
+				</div>
+
+				<div class="desc">
+					<p ng-show="data.selected.option_desc[item.id]" ng-bind-html="data.selected.option_desc[item.id]"></p>
+				</div>
+			</tab>
+		</tabset>
+
+		<tabset justified="true" class="filters-secondary" ng-show="data.selected.filter_primary">
+			<tab ng-repeat="item in data.filtered.filters" ng-if="item.parent_display"
+				heading="{{item.title}}" active="item.active" id="filter-{{item.id}}"
+				class="{{item.has_selected}}" ng-style="item.css"
+				hm-panmove="slideFilters($event)" hm-panend="slideFilters($event)"
+				ng-click="toggleFilterLevel(); toggleDetail(); applyFilters('update', item.id); slideFilters($event)">
+
+				<button type="button" class="close"
+					ng-click="toggleDetail(); item.active = false; data.selected.filter_recent = null;
+						data.selected.filter_active = null">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+
+				<div class="question">
+					<p>{{item.question | trustHTML}}</p>
+				</div>
+
+				<div class="options form-type-{{item.form_type}}">
+					<h3 class="filter-title">{{item.title}}</h3>
+
+					<!-- Single-select -->
+					<div class="btn-group" ng-if="item.form_type == 'select'" dropdown>
+						<button type="button" class="btn dropdown-toggle" dropdown-toggle>
+							<span class="dropdown-title">
+								{{data.selected.filters_options[item.id][0] || 'Select One'}}
+							</span>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li ng-repeat="option in item.options track by option.id"
+								ng-class="{'disabled': option.disabled, 'active': data.selected.filters_options[item.id][0] == option.title}"
+								ng-click="addFilter()">
+								<a>{{option.title}}</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Cascading single-selects -->
+					<div class="btn-group" ng-if="item.form_type == 'select_cascade'"
+						ng-repeat="option_group in item.options" dropdown>
+						<button type="button" class="btn dropdown-toggle" dropdown-toggle
+							ng-hide="$index > 0 && !item.options[$index][data.selected.filters[item.id][$index - 1]]">
+							<span class="dropdown-title">
+								{{data.selected.filters_options[item.id][$index] || item.form_select_title[$index]}}
+							</span>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" ng-if="$index == 0" ng-init="parent_idx = $index">
+							<li ng-repeat="option in option_group track by option.id"
+								ng-class="{'disabled': option.disabled, 'active': data.selected.filters_options[item.id][parent_idx] == option.title}"
+								ng-click="addFilter()">
+								<a>{{option.title}}</a>
+							</li>
+						</ul>
+						<ul class="dropdown-menu" ng-if="$index > 0" ng-init="parent_idx = $index">
+							<li ng-repeat="option in item.options[$index][data.selected.filters[item.id][$index - 1]] track by option.id"
+								ng-class="{'disabled': option.disabled, 'active': data.selected.filters_options[item.id][parent_idx] == option.title}"
+								ng-click="addFilter()">
+								<a>{{option.title}}</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Checkboxes -->
+					<div class="btn-group checkboxes" ng-if="item.form_type == 'checkbox'">
+						<button type="button" class="checkbox"
+							ng-repeat="option in item.options track by option.id" btn-checkbox
+							ng-model="data.selected.filters_options[item.id][option.id]"
+							ng-class="{'disabled': option.disabled}" ng-disabled="option.disabled"
+							ng-click="addFilter()">
+							<span class="glyphicon glyphicon-ok"></span> {{option.title}}
+						</button>
+					</div>
+				</div>
+
+				<div class="desc">
+					<p ng-show="data.selected.option_desc[item.id]">
+						{{data.selected.option_desc[item.id]}}
+					</p>
+				</div>
+			</tab>
+		</tabset>
+	</section>
+</div>
+
+<div class="app-content" ng-class="{'single': data.filtered.search}" ui-scrollfix="-160">
+	<section class="filters-selected" ng-class="{'has_selected': data.selected.filters_display.length > 0}">
+		<div>
+			<h4>
+				<span ng-hide="data.selected.filters_display.length == 0">
+					{{data.labels.header_selected[0]}}
+				</span>
+				<span>
+					{{data.labels.header_selected[1]}}
+					<span class="count">{{data.filtered.counts.main}}</span>
+					{{data.labels.header_selected[2]}}
+				</span>
+				<span ng-hide="data.selected.filters_display.length == 0">
+					{{data.labels.header_selected[3]}}
+				</span>
+			</h4>
+			<span ng-repeat="filter in data.selected.filters_display">
+				<span class="label" ng-repeat="(id, title) in filter">
+					<span>{{title[0]}}: </span>{{title[1]}}
+					<button type="button" class="close" ng-click="confirmAction('remove')">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+				</span>
+			</span>
+			<div class="providers-header-fixed">
+				<div ng-repeat="column in data.labels.main.columns" class="providers-col-{{$index + 1}}"
+					ng-class="{'sort-by': column.sort_by}">
+					<a ng-click="changeSort($index)">{{column.title}} <span class="caret"></span></a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="providers">
+		<table class="table table-responsive">
+			<thead class="providers-header">
+				<tr>
+					<th ng-repeat="column in data.labels.main.columns" class="providers-col-{{$index + 1}}"
+						ng-class="{'sort-by': column.sort_by}">
+						<a ng-click="changeSort($index)">{{column.title}} <span class="caret"></span></a>
+					</th>
+				</tr>
+			</thead>
+			<tbody ng-repeat="(group_index, group_name) in data.labels.main.groups.headers"
+				ng-if="isXSmallDevice()" class="providers-content is-grouped">
+				<tr class="providers-group"
+					ng-hide="data.filtered.counts.groups[0][group_index] < 1 || data.filtered.search">
+					<td>{{group_name}}</td>
+				</tr>
+				<tr ng-repeat="provider in data.filtered.main track by provider.id" ng-show="!provider.hide"
+					ng-if="group_index == provider[data.labels.main.groups.group_key]"
+					id="provider-{{provider.id}}" ng-class="{'is-open': provider.is_open}"
+					popover="<div class='arrow'></div><div class='detail'>{{provider.detail.html}}</div>"
+					popover-placement="bottom" popover-trigger="show" ng-click="toggleDetail(provider.id)">
+					<td class="providers-col-1">
+						<span>
+							<span class="provider-logo">
+								<img ng-src="{{data.base_url}}{{provider.logo}}" alt="" />
+							</span>
+							<span class="provider-name">
+								<h5>{{provider.name}}</h5>
+							</span>
+						</span>
+						<button type="button" class="close">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+			<tbody class="providers-content" ng-if="!isXSmallDevice()">
+				<tr ng-repeat="provider in data.filtered.main track by provider.id" ng-show="!provider.hide"
+					id="provider-{{provider.id}}" ng-class="{'is-open': provider.is_open}"
+					popover="<div class='arrow'></div><div class='detail'>{{provider.detail.html}}</div>"
+					popover-placement="bottom" popover-trigger="show" ng-click="toggleDetail(provider.id)">
+					<td class="providers-col-1">
+						<span>
+							<span class="provider-logo">
+								<img ng-src="{{data.base_url}}{{provider.logo}}" alt="" />
+							</span>
+							<span class="provider-name">
+								<h5>{{provider.name}}</h5>
+							</span>
+						</span>
+						<button type="button" class="close">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+					</td>
+					<td class="providers-col-2"><span>{{provider.tier_name}}</span></td>
+					<td class="providers-col-3">
+						<span>{{provider.cloud_partner_connect}}</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+</div>
+
+<footer class="app-footer">
+	<div><p>{{data.labels.disclaimer}}</p></div>
+</footer>

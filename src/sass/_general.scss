@@ -1,0 +1,96 @@
+/**
+ * General
+ */
+
+//== Scaffolding
+html,
+body {
+	height: 100%;
+
+}
+@media (min-width: $screen-sm-min) {
+	html {
+		overflow-y: scroll;
+
+		&.no-scroll body {
+			overflow: hidden;
+		}
+	}
+}
+main {
+	background: #fff;
+}
+@media(max-width: $screen-xs-max) {
+	body {
+		background: #eee;
+	}
+	main {
+		background: transparent;
+	}
+}
+
+
+//== Typography
+@font-face {
+	font-family: "Glyphicons Halflings";
+	src: url('#{$icon-font-path}#{$icon-font-name}.eot');
+	src: url('#{$icon-font-path}#{$icon-font-name}.eot?#iefix') format('embedded-opentype'),
+		url('#{$icon-font-path}#{$icon-font-name}.woff') format('woff'),
+		url('#{$icon-font-path}#{$icon-font-name}.ttf') format('truetype'),
+		url('#{$icon-font-path}#{$icon-font-name}.svg##{$icon-font-svg-id}') format('svg');
+}
+
+
+//== Page navigation
+.page-nav {
+	display: none;
+	top: 0;
+    width: 100%;
+	height: 50px;
+	margin: 0;
+	padding-bottom: 0;
+	border: 0;
+	background-color: $emc-gray-light;
+    z-index: 1040;
+
+    .ui-scrollfix > & {
+	    @media (min-width: $emc-screen-md-min) {
+			position: fixed;
+			display: block;
+	    }
+    }
+	.navbar {
+		position: relative;
+		@media (min-width: $screen-lg-min) {
+			max-width: $container-lg;
+		}
+		margin-top: 0;
+		margin-bottom: 0;
+		@include container-fixed();
+
+		small {
+			font-size: 60%;
+		}
+	}
+	.navbar-brand {
+		position: absolute;
+		top: 0;
+		width: 91px;
+		height: 56px;
+		text-indent: -9999px;
+		background-color: $emc-blue;
+		background-image: url('/images/header/header-sprites-2014.png');
+		background-position: 0 -934px;
+		background-repeat: no-repeat;
+	}
+	.navbar-top {
+		position: absolute;
+		top: 25px;
+		right: 0;
+		padding-right: 15px;
+		font-size: 0.9em;
+		color: #fff;
+		cursor: pointer;
+		@include user-select(none);
+	}
+}
