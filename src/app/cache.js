@@ -9,15 +9,19 @@ angular.module('appFilters')
 
     var service= {},
         selectFilterKeysOptions = [
-        "service_offering", 
-        "tier", 
+        "service_offering", // select
+        "tier",  // select
         "theater", // not working - checkbox
-        "market", // working ok - select
+        "market", //  select
         "cloud_hq_location", //not working - select
-        "emc_product", // not working - select
-        "service_type", //not working - select
-        "geographical", //not working - select
-        "datacenter_location", //not working - select
+        "cloud_hq_location_1", //not working - select
+        "cloud_hq_location_2", //not working - select
+        "emc_product", 
+        "service_type", 
+        "geographical", 
+        "geographical_1", 
+        "datacenter_location", 
+        "datacenter_location_1",
         "credit_card_swipe", //not working - checkbox
         "public_sector" //not working - checkbox
 
@@ -31,15 +35,36 @@ angular.module('appFilters')
             option: option
         };
         //Ex. filter.id === 'tier'  || option.id === 'platinum'
-        localStorage.setItem(filter.id, JSON.stringify(filterObject));
+        if ( !localStorage.getItem(filter.id)){
+            localStorage.setItem(filter.id, JSON.stringify(filterObject));
+        }
+        else{
+            localStorage.setItem(filter.id+'_1', JSON.stringify(filterObject));
+        }
     };
 
     service.addGenericItemCache = function(key,data){
           localStorage.setItem(key, JSON.stringify(data));
     };
 
+    //Logic - If is parent parent_idx = 0
+    //Logic - If is first child parent_idx =1  
     service.getFilterCache = function(keyFilter){
-        return localStorage.getItem(keyFilter);
+        var filter = localStorage.getItem(keyFilter);
+        
+        if (filter){
+            var id=0; //is parent
+            if (keyFilter.indexOf('_1') > 0){
+                id=1; //is first child
+            }
+            if (keyFilter.indexOf('_2') > 0){
+                id=2; //is second child
+            }
+            filter = JSON.parse(filter);
+            filter.parent_idx = id;
+            filter = JSON.stringify(filter);
+        }
+        return filter;
     };
 
     service.removeFilterCache = function(filter){

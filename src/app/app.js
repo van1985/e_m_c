@@ -107,7 +107,7 @@ angular.module('emc_service_providers', [
 		});
 		return data;
 	};
-
+*/
 	$scope.updateUrl = function(filter, option){
 		if ( !_.isUndefined(filter) ) {
 			this.item   = filter;
@@ -265,18 +265,19 @@ console.log(option);
 		}
 		console.log(filter);
 		console.log(option);
-		// While creating a filter writes the URL
-		$location.search(this.item.id, this.option.id);
+		
 
 		var selected   = $scope.data.selected;
 		var element_id = 'filter-' + this.item.id;
-		var cascade_values;
+		var cascade_values; //cascade values have the values por select in cascade
 
+		
 		if ( this.item.form_type === 'checkbox' &&
 			_.contains(selected.filters[this.item.id], this.option.id) ) {
 			$scope.removeFilter(this.item.id, this.option.id);
-			return true;
+			//return true;
 		}
+		
 
 		if (_.isNull(this.item.parent_display) && this.item.has_children) {
 			selected.filter_primary = this.item.id;
@@ -316,6 +317,16 @@ console.log(option);
 		//Add filter to cache
 		//Author: lvanden
 		//Date: 02/07/2015
+
+		// While creating a filter writes the URL
+		if (cascade_values){
+			$location.search(this.item.id, cascade_values.toString());
+		}
+		else
+		{
+			$location.search(this.item.id, this.option.id);
+		}
+
 		if ( this.item ){
 			var transferObject={
 				data: $scope.data,
@@ -938,27 +949,10 @@ $scope.init = function(){
 		$scope.data = initObject.data;
 		for (var i = 0, len = initObject.filters.length; i < len; i++) {
 			var filterObject = initObject.filters[i];
+			this.parent_idx = filterObject.parent_idx ? filterObject.parent_idx : null;
 			$scope.addFilter(filterObject.filter, filterObject.option);
 		}
 	}
-	/*
-	var queryParameters = 
-	//More performance with for than with arr.forEach
-	if (!jQuery.isEmptyObject(queryParameters)){
-		for (var i = 0, len = selectFilterKeysOptions.length; i < len; i++) {
-			var filterObject =  CacheSrv.getFilterCache( selectFilterKeysOptions[i]);
-			filterObject = JSON.parse(filterObject);
-			if (filterObject){
-				var data = CacheSrv.getFilterCache('data');
-				$scope.data = JSON.parse(data);
-				$scope.addFilter(filterObject.filter, filterObject.option);
-			}
-		}
-	}
-	else{
-		CacheSrv.cleanFilterCache();
-	}
-	*/
 };
 
 /**************************************************************************************************/
