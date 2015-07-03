@@ -117,7 +117,8 @@
 							ng-repeat="option in item.options track by option.id" btn-checkbox
 							ng-model="data.selected.filters_options[item.id][option.id]"
 							ng-class="{'disabled': option.disabled}" ng-disabled="option.disabled"
-							ng-click="addFilter()">
+							ng-click="addFilter()"
+							id="{{item.id}}-{{option.id}}">
 							<!-- this is the checkbox we chage the function called-->
 							<span class="glyphicon glyphicon-ok"></span> {{option.title}}
 						</button>

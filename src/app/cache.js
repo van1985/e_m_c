@@ -13,15 +13,15 @@ angular.module('appFilters')
         "tier",  // select
         "theater", // not working - checkbox
         "market", //  select
-        "cloud_hq_location", //not working - select
-        "cloud_hq_location_1", //not working - select
-        "cloud_hq_location_2", //not working - select
-        "emc_product", 
-        "service_type", 
-        "geographical", 
-        "geographical_1", 
-        "datacenter_location", 
-        "datacenter_location_1",
+        "cloud_hq_location", // select
+        "cloud_hq_location_1", //select
+        "cloud_hq_location_2", //select
+        "emc_product", // select
+        "service_type", // select
+        "geographical", // select
+        "geographical_1", // select
+        "datacenter_location", // select
+        "datacenter_location_1", //select
         "credit_card_swipe", //not working - checkbox
         "public_sector" //not working - checkbox
 

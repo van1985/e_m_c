@@ -175,7 +175,7 @@ angular.module('emc_service_providers', [
 				item.has_selected = '';
 			});
 			$scope.applyFilters('reset');
-			$location.search(''); // removes all URL's Filter Params queried
+			//$location.search(''); // removes all URL's Filter Params queried
 		}
 
 		_(selected.filters_options).forEach(function(item, index, filter) {
@@ -275,6 +275,7 @@ console.log(option);
 		if ( this.item.form_type === 'checkbox' &&
 			_.contains(selected.filters[this.item.id], this.option.id) ) {
 			$scope.removeFilter(this.item.id, this.option.id);
+			$scope.data.selected.filters = _.without($scope.data.selected.filters , _.findWhere($scope.data.selected.filters , {id: 3}));
 			//return true;
 		}
 		
@@ -323,8 +324,30 @@ console.log(option);
 			$location.search(this.item.id, cascade_values.toString());
 		}
 		else
-		{
-			$location.search(this.item.id, this.option.id);
+		{   
+			if (this.item.form_type === 'checkbox'){
+			if ( window.location.search.indexOf(this.item.id) > 0) //concatenate
+			{
+				var str=window.location.search.toString();
+				str=str.replace('?'+this.item.id+'=','');
+				if ( window.location.search.indexOf(this.option.id) < 0){ //Add new option
+					str += ','+this.option.id;
+					$location.search(this.item.id,str);
+				}
+				else //remove option
+				{
+					str = str.replace(this.option.id+',','');
+					str = str.replace(','+this.option.id,'');
+					str = str.replace(this.option.id,'');
+				}
+				$location.search(this.item.id,str);
+			}
+			else //add new
+			{$location.search(this.item.id, this.option.id);}
+			}
+			else{
+				$location.search(this.item.id, this.option.id);
+			}
 		}
 
 		if ( this.item ){
@@ -374,7 +397,7 @@ console.log(option);
 			}).then(function() {
 				if (_.size(selected.filters) === 0) {
 					$scope.resetFilters('all');
-					$location.search('');	// Removes all query filters
+					//$location.search('');	// Removes all query filters
 				} else {
 					if (this_filter.form_type === 'select_cascade') {
 						this_filter.has_selected = '';
@@ -951,6 +974,12 @@ $scope.init = function(){
 			var filterObject = initObject.filters[i];
 			this.parent_idx = filterObject.parent_idx ? filterObject.parent_idx : null;
 			$scope.addFilter(filterObject.filter, filterObject.option);
+			/*
+			if (filterObject.filter.form_type==='checkbox'){
+				filterCheckObject = $scope.data.selected.filters;
+				$scope.data.selected.filters_options[filterObject.filter.id][filterObject.option.id] = filterCheckObject;
+			}
+			*/
 		}
 	}
 };
@@ -1006,7 +1035,18 @@ $scope.init = function(){
 	});
 	}
 
+	/*
+	function updateCheckboxFilters(){
+		jQuery('#theater-ams').click();
+	}
+	*/
 	refresh();
+	/*
+	angular.element(document).ready(function () {
+		updateCheckboxFilters();
+	});
+	*/
+	
 
 
 }]);
