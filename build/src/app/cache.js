@@ -12,6 +12,8 @@ angular.module('appFilters')
         "service_offering", // select
         "tier",  // select
         "theater", // not working - checkbox
+        "theater_1", // not working - checkbox
+        "theater_2", // not working - checkbox
         "market", //  select
         "cloud_hq_location", // select
         "cloud_hq_location_1", //select

@@ -107,7 +107,7 @@ angular.module('emc_service_providers', [
 		});
 		return data;
 	};
-*/
+
 	$scope.updateUrl = function(filter, option){
 		if ( !_.isUndefined(filter) ) {
 			this.item   = filter;
@@ -139,7 +139,7 @@ angular.module('emc_service_providers', [
 			}
 		}
 	};
-
+*/
 	/* END OF SECTION **/
 
 	$scope.toggleOptions = function(action, filter_id) {
@@ -247,6 +247,45 @@ function parseQueryString = function( queryString ) {
 //Call init
 
 
+function updateLocationURL(cascade_values,item,option){
+	if (cascade_values){
+		$location.search(item.id, cascade_values.toString());
+	}
+	else
+	{   
+		if (item.form_type === 'checkbox'){
+		if ( window.location.search.indexOf(item.id) > 0) //concatenate
+		{
+			var str=window.location.search.toString();
+			str=str.replace('?'+item.id+'=','');
+			if ( window.location.search.indexOf(option.id) < 0){ //Add new option
+				str += ','+option.id;
+				$location.search(item.id,str);
+			}
+			else //remove option
+			{
+				str = str.replace(option.id+',','');
+				str = str.replace(','+option.id,'');
+				str = str.replace(option.id,'');
+			}
+			if (str===''){ //remove parameter
+				$location.search(item.id,null);
+			}
+			else
+			{
+				$location.search(item.id,str);
+			}
+		}
+		else //add new
+		{$location.search(item.id, option.id);}
+		}
+		else{
+			$location.search(item.id, option.id);
+		}
+	}
+}
+
+
 
 $scope.addFilter = function(filter, option) {
 
@@ -272,11 +311,12 @@ console.log(option);
 		var cascade_values; //cascade values have the values por select in cascade
 
 		
+
 		if ( this.item.form_type === 'checkbox' &&
 			_.contains(selected.filters[this.item.id], this.option.id) ) {
 			$scope.removeFilter(this.item.id, this.option.id);
-			$scope.data.selected.filters = _.without($scope.data.selected.filters , _.findWhere($scope.data.selected.filters , {id: 3}));
-			//return true;
+			updateLocationURL(cascade_values,this.item,this.option);
+			return true;
 		}
 		
 
@@ -320,6 +360,7 @@ console.log(option);
 		//Date: 02/07/2015
 
 		// While creating a filter writes the URL
+		/*
 		if (cascade_values){
 			$location.search(this.item.id, cascade_values.toString());
 		}
@@ -349,7 +390,8 @@ console.log(option);
 				$location.search(this.item.id, this.option.id);
 			}
 		}
-
+		*/
+		updateLocationURL(cascade_values,this.item,this.option);
 		if ( this.item ){
 			var transferObject={
 				data: $scope.data,
@@ -360,6 +402,7 @@ console.log(option);
 		}
 		/**************************************************************************************************/
 	};
+
 
 	$scope.removeFilter = function(filter_id, option_id) {
 		var this_filter;
