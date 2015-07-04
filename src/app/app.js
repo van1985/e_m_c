@@ -144,7 +144,10 @@ angular.module('emc_service_providers', [
 
 	$scope.toggleOptions = function(action, filter_id) {
 		$scope.data.filtered.filters = $filter('toggleOptions')($scope, action, filter_id);
-
+		var transferObject={
+			data: $scope.data
+		};
+		$rootScope.$broadcast('updateCacheData', JSON.stringify(transferObject));
 	};
 
 	$scope.applyFilters = function(action, filter_id) {
@@ -203,12 +206,12 @@ angular.module('emc_service_providers', [
 			document.querySelectorAll('.filters > div > div:first-child')
 		).css({'margin-left': '0px'});
 	
-		/**************************************************************************************************/
-		//Remove filter from cache
-		//Author: lvanden
-		//Date: 02/07/2015
+/**************************************************************************************************/
+//Remove filter from cache
+//Author: lvanden
+//Date: 02/07/2015
 		$rootScope.$broadcast('resetFilterCache');
-		/**************************************************************************************************/
+/**************************************************************************************************/
 	};
 
 	$scope.toggleReset = function() {
@@ -220,32 +223,12 @@ angular.module('emc_service_providers', [
 		}
 	};
 
-
-
-/*
-function parseQueryString = function( queryString ) {
-    var params = {}, queries, temp, i, l;
- 
-    // Split into key/value pairs
-    queries = queryString.split("&");
- 
-    // Convert the array of strings into an object
-    for ( i = 0, l = queries.length; i < l; i++ ) {
-        temp = queries[i].split('=');
-        params[temp[0]] = temp[1];
-    }
- 
-    return params;
-};
-*/
-	//var id = [];
-
-	//$scope.addFilter('tier','platinum');
-	//refresh();
-
-
-//Call init
-
+/**************************************************************************************************/
+//Update Location URL
+//Author: lvanden
+//Date: 02/07/2015
+// This method help to mantain URL from browser update with all the neccesary information
+/**************************************************************************************************/
 
 function updateLocationURL(cascade_values,item,option){
 	if (cascade_values){
@@ -354,53 +337,21 @@ console.log(option);
 		$scope.toggleDetail();
 		$scope.applyFilters('update', this.item.id);
 
-		/**************************************************************************************************/
-		//Add filter to cache
-		//Author: lvanden
-		//Date: 02/07/2015
+/**************************************************************************************************/
+//Add filter to cache
+//Author: lvanden
+//Date: 02/07/2015
 
-		// While creating a filter writes the URL
-		/*
-		if (cascade_values){
-			$location.search(this.item.id, cascade_values.toString());
-		}
-		else
-		{   
-			if (this.item.form_type === 'checkbox'){
-			if ( window.location.search.indexOf(this.item.id) > 0) //concatenate
-			{
-				var str=window.location.search.toString();
-				str=str.replace('?'+this.item.id+'=','');
-				if ( window.location.search.indexOf(this.option.id) < 0){ //Add new option
-					str += ','+this.option.id;
-					$location.search(this.item.id,str);
-				}
-				else //remove option
-				{
-					str = str.replace(this.option.id+',','');
-					str = str.replace(','+this.option.id,'');
-					str = str.replace(this.option.id,'');
-				}
-				$location.search(this.item.id,str);
-			}
-			else //add new
-			{$location.search(this.item.id, this.option.id);}
-			}
-			else{
-				$location.search(this.item.id, this.option.id);
-			}
-		}
-		*/
 		updateLocationURL(cascade_values,this.item,this.option);
 		if ( this.item ){
 			var transferObject={
-				data: $scope.data,
+				//data: $scope.data,
 				filter: this.item,
 				option: this.option
 			};
 			$rootScope.$broadcast('addFilterCache', JSON.stringify(transferObject));
 		}
-		/**************************************************************************************************/
+/**************************************************************************************************/
 	};
 
 
@@ -412,12 +363,12 @@ console.log(option);
 		var items_remove   = [];
 		var element_id     = 'filter-' + filter_id;
 
-		/**************************************************************************************************/
-		//Remove filter from cache
-		//Author: lvanden
-		//Date: 02/07/2015
-		$rootScope.$broadcast('removeFilterCache', filter_id);
-		/**************************************************************************************************/
+/**************************************************************************************************/
+//Remove filter from cache
+//Author: lvanden
+//Date: 02/07/2015
+$rootScope.$broadcast('removeFilterCache', filter_id);
+/**************************************************************************************************/
 
 		$scope.toggleDetail();
 
@@ -1007,24 +958,32 @@ $location.search(filter_id, null);
 /**************************************************************************************************/
 // Author: lvanden
 // Date: 02/07/2015
-//Cache Filter
+// Init function declaration - This function is the responsible for load all the information from 
+// cache when the user refresh the page or copy/paste the link into another page
+/**************************************************************************************************/
 
 $scope.init = function(){
-	var initObject = CacheSrv.init($location.search());
+	var deferred = $q.defer(),
+		checkbox = [],
+		initObject = CacheSrv.init($location.search());
 	if (initObject){ //is define
 		$scope.data = initObject.data;
 		for (var i = 0, len = initObject.filters.length; i < len; i++) {
 			var filterObject = initObject.filters[i];
 			this.parent_idx = filterObject.parent_idx ? filterObject.parent_idx : null;
-			$scope.addFilter(filterObject.filter, filterObject.option);
-			/*
-			if (filterObject.filter.form_type==='checkbox'){
-				filterCheckObject = $scope.data.selected.filters;
-				$scope.data.selected.filters_options[filterObject.filter.id][filterObject.option.id] = filterCheckObject;
+			if ( filterObject.filter.form_type!=='checkbox'){
+				$scope.addFilter(filterObject.filter, filterObject.option);
 			}
-			*/
+			else{
+				if (filterObject.filter.id ==='theater'){
+					checkbox.push(filterObject);
+				}
+			}
 		}
+		CacheSrv.addGenericItemCache('checkbox',checkbox);
 	}
+	deferred.resolve();
+	return deferred.promise;
 };
 
 /**************************************************************************************************/
@@ -1069,27 +1028,40 @@ $scope.init = function(){
 /**************************************************************************************************/
 // Author: lvanden
 // Date: 02/07/2015
-//Cache Filter
+// Init Function - Copy/Paste link feature
 /**************************************************************************************************/
 
-		$scope.init();
-		$scope.applyFilters();
-		$scope.setFilterCSS();
+		$scope.init().then(function(){
+			$scope.applyFilters();
+			$scope.setFilterCSS();
+		});
 	});
 	}
-
-	/*
-	function updateCheckboxFilters(){
-		jQuery('#theater-ams').click();
-	}
-	*/
-	refresh();
-	/*
-	angular.element(document).ready(function () {
-		updateCheckboxFilters();
-	});
-	*/
 	
+/**************************************************************************************************/
+// Author: lvanden
+// Date: 02/07/2015
+// Fix issue for copy/paste link - Only happens for theater type
+/**************************************************************************************************/
+angular.element(document).ready(function () {
+	var data = CacheSrv.getGenericCacheData('checkbox');
+	var checkbox = JSON.parse(data);
+	if (checkbox){
+		for (var j = 0, len = checkbox.length; j < len; j++) {
+			var object = checkbox[j];
+			if ( !jQuery('#'+object.filter.id+'-'+object.option.id).hasClass('active') ){
+				jQuery('#'+object.filter.id+'-'+object.option.id).addClass('active');
+			}
+		}
+	}	
+});
+	
+/**************************************************************************************************/
+// Author: lvanden
+// Date: 02/07/2015
+// Encapsulate Refresh in a function for reuse in other functions
+/**************************************************************************************************/
+refresh();
 
 
 }]);

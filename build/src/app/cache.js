@@ -11,9 +11,6 @@ angular.module('appFilters')
         selectFilterKeysOptions = [
         "service_offering", // select
         "tier",  // select
-        "theater", // not working - checkbox
-        "theater_1", // not working - checkbox
-        "theater_2", // not working - checkbox
         "market", //  select
         "cloud_hq_location", // select
         "cloud_hq_location_1", //select
@@ -24,9 +21,9 @@ angular.module('appFilters')
         "geographical_1", // select
         "datacenter_location", // select
         "datacenter_location_1", //select
-        "credit_card_swipe", //not working - checkbox
-        "public_sector" //not working - checkbox
-
+        "theater", //checkbox - special case: fix issue
+        "theater_1", //checkbox - special case: fix issue
+        "theater_2" //checkbox - special case: fix issue
         ];
 
 
@@ -52,6 +49,10 @@ angular.module('appFilters')
 
     service.addGenericItemCache = function(key,data){
           localStorage.setItem(key, JSON.stringify(data));
+    };
+
+    service.getGenericCacheData = function(key){
+        return localStorage.getItem(key);
     };
 
     //Logic - If is parent parent_idx = 0
@@ -120,7 +121,7 @@ angular.module('appFilters')
     $rootScope.$on('addFilterCache', function (event, data) {
         var TransferObject = JSON.parse(data);
         service.addFilterCache(TransferObject.filter, TransferObject.option);
-        service.addGenericItemCache('data',TransferObject.data);
+        //service.addGenericItemCache('data',TransferObject.data);
     });
 
     //TODO: Not best practice - Low performance. 
@@ -131,6 +132,12 @@ angular.module('appFilters')
     //TODO: Not best practice - Low performance. 
     $rootScope.$on('resetFilterCache',function() {
          service.cleanFilterCache();
+    });
+
+        //TODO: Not best practice - Low performance. 
+    $rootScope.$on('updateCacheData',function (event,data) {
+         var TransferObject = JSON.parse(data);
+         service.addGenericItemCache('data',TransferObject.data);
     });
 
     return service;           
