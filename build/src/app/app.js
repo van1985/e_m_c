@@ -205,13 +205,6 @@ angular.module('emc_service_providers', [
 		angular.element(
 			document.querySelectorAll('.filters > div > div:first-child')
 		).css({'margin-left': '0px'});
-	
-/**************************************************************************************************/
-//Remove filter from cache
-//Author: lvanden
-//Date: 02/07/2015
-		$rootScope.$broadcast('resetFilterCache');
-/**************************************************************************************************/
 		};
 
 /**************************************************************************************************/
@@ -241,7 +234,7 @@ angular.module('emc_service_providers', [
 // This method help to mantain URL from browser update with all the neccesary information
 /**************************************************************************************************/
 function parse(val) {
-    var result = "Not found",
+    var result = null,
         tmp = [];
     location.search
     //.replace ( "?", "" ) 
@@ -322,7 +315,6 @@ console.log(option);
 		if ( this.item.form_type === 'checkbox' &&
 			_.contains(selected.filters[this.item.id], this.option.id) ) {
 			$scope.removeFilter(this.item.id, this.option.id);
-			updateLocationURL(cascade_values,this.item,this.option);
 			return true;
 		}
 		
@@ -362,19 +354,11 @@ console.log(option);
 		$scope.applyFilters('update', this.item.id);
 
 /**************************************************************************************************/
-//Add filter to cache
+//UpdateUrl
 //Author: lvanden
 //Date: 02/07/2015
 
-		updateLocationURL(cascade_values,this.item,this.option);
-		if ( this.item ){
-			var transferObject={
-				//data: $scope.data,
-				filter: this.item,
-				option: this.option
-			};
-			$rootScope.$broadcast('addFilterCache', JSON.stringify(transferObject));
-		}
+updateLocationURL(cascade_values,this.item,this.option);
 /**************************************************************************************************/
 	};
 
@@ -386,13 +370,6 @@ console.log(option);
 		var selected_count = _.size(selected.filters);
 		var items_remove   = [];
 		var element_id     = 'filter-' + filter_id;
-
-/**************************************************************************************************/
-//Remove filter from cache
-//Author: lvanden
-//Date: 02/07/2015
-$rootScope.$broadcast('removeFilterCache', filter_id);
-/**************************************************************************************************/
 
 		$scope.toggleDetail();
 
@@ -987,24 +964,20 @@ $location.search(filter_id, null);
 /**************************************************************************************************/
 
 $scope.init = function(){
-	var deferred = $q.defer(),
-		checkbox = [],
-		initObject = CacheSrv.init($location.search());
-	if (initObject){ //is define
-		$scope.data = initObject.data;
-		for (var i = 0, len = initObject.filters.length; i < len; i++) {
-			var filterObject = initObject.filters[i];
-			this.parent_idx = filterObject.parent_idx ? filterObject.parent_idx : null;
-			if ( filterObject.filter.form_type!=='checkbox'){
-				$scope.addFilter(filterObject.filter, filterObject.option);
-			}
-			else{
-				if (filterObject.filter.id ==='theater'){
-					checkbox.push(filterObject);
+	var deferred = $q.defer();
+	if ( $scope.data.filters){
+		var keyFilters=CacheSrv.getKeysFilters();
+		for (var i = 0, len = keyFilters.length; i < len; i++) {
+			var option = parse(keyFilters[i]);
+			if (option){
+				var filterObject = CacheSrv.getFilter(keyFilters[i],option,$scope.data.filters);
+				if (filterObject.filter){
+					for (var j = 0, lenj = filterObject.option.length; j < lenj; j++) {
+						$scope.addFilter(filterObject.filter, filterObject.option[j]);
+					}
 				}
 			}
 		}
-		CacheSrv.addGenericItemCache('checkbox',checkbox);
 	}
 	deferred.resolve();
 	return deferred.promise;
@@ -1061,25 +1034,6 @@ $scope.init = function(){
 		});
 	});
 	}
-	
-/**************************************************************************************************/
-// Author: lvanden
-// Date: 02/07/2015
-// Fix issue for copy/paste link - Only happens for theater type
-/**************************************************************************************************/
-angular.element(document).ready(function () {
-	var data = CacheSrv.getGenericCacheData('checkbox');
-	var checkbox = JSON.parse(data);
-	if (checkbox){
-		for (var j = 0, len = checkbox.length; j < len; j++) {
-			var object = checkbox[j];
-			if ( !jQuery('#'+object.filter.id+'-'+object.option.id).hasClass('active') ){
-				jQuery('#'+object.filter.id+'-'+object.option.id).addClass('active');
-			}
-		}
-	}	
-});
-	
 /**************************************************************************************************/
 // Author: lvanden
 // Date: 02/07/2015
