@@ -229,6 +229,20 @@ angular.module('emc_service_providers', [
 //Date: 02/07/2015
 // This method help to mantain URL from browser update with all the neccesary information
 /**************************************************************************************************/
+function parse(val) {
+    var result = "Not found",
+        tmp = [];
+    location.search
+    //.replace ( "?", "" ) 
+    // this is better, there might be a question mark inside
+    .substr(1)
+        .split("&")
+        .forEach(function (item) {
+        tmp = item.split("=");
+        if (tmp[0] === val) { result = decodeURIComponent(tmp[1]);}
+    });
+    return result;
+}
 
 function updateLocationURL(cascade_values,item,option){
 	if (cascade_values){
@@ -239,8 +253,7 @@ function updateLocationURL(cascade_values,item,option){
 		if (item.form_type === 'checkbox'){
 		if ( window.location.search.indexOf(item.id) > 0) //concatenate
 		{
-			var str=window.location.search.toString();
-			str=str.replace('?'+item.id+'=','');
+			var str = parse(item.id);
 			if ( window.location.search.indexOf(option.id) < 0){ //Add new option
 				str += ','+option.id;
 				$location.search(item.id,str);
