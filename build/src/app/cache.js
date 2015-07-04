@@ -21,6 +21,7 @@ angular.module('appFilters')
         "geographical_1", // select
         "datacenter_location", // select
         "datacenter_location_1", //select
+        "datacenter_location_2", //select
         "theater", //checkbox - special case: fix issue
         "theater_1", //checkbox - special case: fix issue
         "theater_2" //checkbox - special case: fix issue
