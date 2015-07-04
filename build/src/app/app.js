@@ -212,7 +212,18 @@ angular.module('emc_service_providers', [
 //Date: 02/07/2015
 		$rootScope.$broadcast('resetFilterCache');
 /**************************************************************************************************/
-	};
+		};
+
+/**************************************************************************************************/
+//Reset all filter from URL
+//Author: jKraut
+//Date: 04/07/2015
+
+	$scope.resetUrl = function () {
+		$location.search('');
+	};  
+/**************************************************************************************************/
+	
 
 	$scope.toggleReset = function() {
 		if ( ( _.isUndefined($scope.data.selected) || _.isEmpty($scope.data.selected.filters) ) &&

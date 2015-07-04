@@ -39,7 +39,7 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "				</div>\n" +
     "				<div class=\"form-group app-reset\">\n" +
     "					<button type=\"button\" class=\"btn\" ng-class=\"{'disabled': toggleReset()}\"\n" +
-    "						ng-disabled=\"toggleReset()\" ng-click=\"resetFilters('all'); toggleDetail()\">\n" +
+    "						ng-disabled=\"toggleReset()\" ng-click=\"resetFilters('all'); toggleDetail(); resetUrl()\">\n" +
     "						<span class=\"sm-min\">{{data.labels.reset.lg}}</span>\n" +
     "						<span class=\"xs-max\">\n" +
     "							<span>{{data.labels.reset.lg}}</span>\n" +
@@ -121,8 +121,7 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "							ng-repeat=\"option in item.options track by option.id\" btn-checkbox\n" +
     "							ng-model=\"data.selected.filters_options[item.id][option.id]\"\n" +
     "							ng-class=\"{'disabled': option.disabled}\" ng-disabled=\"option.disabled\"\n" +
-    "							ng-click=\"addFilter()\"\n" +
-    "							id=\"{{item.id}}-{{option.id}}\">\n" +
+    "							ng-click=\"addFilter()\">\n" +
     "							<!-- this is the checkbox we chage the function called-->\n" +
     "							<span class=\"glyphicon glyphicon-ok\"></span> {{option.title}}\n" +
     "						</button>\n" +
