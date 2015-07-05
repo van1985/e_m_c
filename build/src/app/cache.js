@@ -55,7 +55,7 @@ angular.module('appFilters')
                 {return optionsFilter[1].emea;}
 
             if (parentId === 'aus')
-                {return optionsFilter[2].aux;}
+                {return optionsFilter[2].aus;}
             if (parentId === 'bra')
                 {return optionsFilter[2].bra;}
             if (parentId === 'can')
@@ -82,7 +82,7 @@ angular.module('appFilters')
                 {return optionsFilter[1].emea;}
 
             if (parentId === 'aus')
-                {return optionsFilter[2].aux;}
+                {return optionsFilter[2].aus;}
             if (parentId === 'bra')
                 {return optionsFilter[2].bra;}
             if (parentId === 'can')
