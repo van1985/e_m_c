@@ -809,6 +809,7 @@ $location.search(filter_id, null);
 	$scope.confirmActionCtrl = ['$scope', '$modalInstance', function($scope, $modalInstance) {
 		$scope.ok = function() {
 			$modalInstance.close('result');
+			$location.search('');
 		};
 
 		$scope.cancel = function() {
@@ -1040,7 +1041,6 @@ $scope.init = function(){
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/
 refresh();
-
 
 }]);
 

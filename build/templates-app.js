@@ -121,7 +121,8 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "							ng-repeat=\"option in item.options track by option.id\" btn-checkbox\n" +
     "							ng-model=\"data.selected.filters_options[item.id][option.id]\"\n" +
     "							ng-class=\"{'disabled': option.disabled}\" ng-disabled=\"option.disabled\"\n" +
-    "							ng-click=\"addFilter()\">\n" +
+    "							ng-click=\"addFilter()\"\n" +
+    "							>\n" +
     "							<!-- this is the checkbox we chage the function called-->\n" +
     "							<span class=\"glyphicon glyphicon-ok\"></span> {{option.title}}\n" +
     "						</button>\n" +
