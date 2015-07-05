@@ -975,6 +975,9 @@ $scope.init = function(){
 				if (filterObject.filter){
 					for (var j = 0, lenj = filterObject.option.length; j < lenj; j++) {
 						$scope.addFilter(filterObject.filter, filterObject.option[j]);
+						if (filterObject.filter.form_type === 'checkbox'){
+							checkbox.push(filterObject);
+						}
 					}
 				}
 			}
@@ -983,6 +986,30 @@ $scope.init = function(){
 	deferred.resolve();
 	return deferred.promise;
 };
+
+
+/**************************************************************************************************/
+// Author: lvanden
+// Date: 02/07/2015
+// Update css class checkbox (Active) & URL QueryString - refresh
+/**************************************************************************************************/
+var checkbox=[];
+function updateCheckboxSstatus(){
+	for (var i=0, leni = checkbox.length; i < leni; i++){
+		var filterObject = checkbox[i];
+		for (var j = 0, lenj = filterObject.option.length; j < lenj; j++) {
+			if ( !jQuery('#'+filterObject.filter.id+'-'+filterObject.option[j].id).hasClass('active') ){
+				jQuery('#'+filterObject.filter.id+'-'+filterObject.option[j].id).addClass('active');
+				if (filterObject.filter.id ==='public_sector' || filterObject.filter.id ==='credit_card_swipe'){
+					$location.search(filterObject.filter.id, filterObject.option[j].id);
+				}
+			}
+		}	
+	}
+}
+angular.element(document).ready(function () {
+	updateCheckboxSstatus();	
+});
 
 /**************************************************************************************************/
 
@@ -1041,6 +1068,7 @@ $scope.init = function(){
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/
 refresh();
+
 
 }]);
 
