@@ -257,8 +257,8 @@ function updateLocationURL(cascade_values,item,option){
 		if (item.form_type === 'checkbox'){
 		if ( window.location.search.indexOf(item.id) > 0) //concatenate
 		{
-			var str = parse(item.id);
-			if ( window.location.search.indexOf(option.id) < 0){ //Add new option
+			var str = parse(item.id); // get values from url for a item.id
+			if ( str.indexOf(option.id) < 0){ //Add new option
 				str += ','+option.id;
 				$location.search(item.id,str);
 			}
