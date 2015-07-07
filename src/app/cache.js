@@ -19,7 +19,9 @@ angular.module('appFilters')
         "datacenter_location", // select
         "theater", //checkbox - special case: fix issue
         "credit_card_swipe",
-        "public_sector"
+        "public_sector",
+        "contract_type",
+        "emc_certified_cloud"
         ];
 
     service.getKeysFilters = function(){

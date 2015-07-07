@@ -285,6 +285,24 @@ function updateLocationURL(cascade_values,item,option){
 	}
 }
 
+function removeCheckboxFilterURL(item,option){
+	//remove checkbox option from URL - Special case multiple checkbox
+	var values=window.location.search.replace('?',''),
+		result='';
+	values = parse(item.id);
+	values = values.split(',');
+
+	for (var z = 0, len = values.length; z < len; z++) {
+		if ( values[z]!==option.id){
+			result += result ==='' ? values[z] : ','+values[z];
+		}
+	}
+	if (result !=='')
+		{$location.search(item.id,result);}
+	else
+		{$location.search(item.id,null);}
+}
+
 
 
 $scope.addFilter = function(filter, option) {
@@ -315,6 +333,8 @@ console.log(option);
 		if ( this.item.form_type === 'checkbox' &&
 			_.contains(selected.filters[this.item.id], this.option.id) ) {
 			$scope.removeFilter(this.item.id, this.option.id);
+			//remove checkbox filter from URL
+			removeCheckboxFilterURL(this.item,this.option);
 			return true;
 		}
 		

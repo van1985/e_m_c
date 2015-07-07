@@ -15,7 +15,7 @@ angular.module('getResource', [
  */
 .factory('getResource', ['$resource', '$q', '$timeout', function($resource, $q, $timeout) {
 	return $resource(
-		'https://cspdb.emc.com/Services/ServiceProviders.asmx/:resource/',
+		' http://emc.dev.bluelevel.co.uk/Services/ServiceProviders.asmx/:resource/',
 		{
 			callback: 'JSON_CALLBACK'
 		},
