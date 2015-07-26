@@ -1,10 +1,7 @@
 /**
  * Application filters
  */
-angular.module('appFilters', [
-	'ngSanitize'
-])
-
+angular.module('appFilters')
 /**
  * Enables/disables filter options based on selected providers.
  *

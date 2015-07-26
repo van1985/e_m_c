@@ -4,7 +4,7 @@
 //Cache Filter
 /**************************************************************************************************/
 
-angular.module('appFilters')
+angular.module('Services')
     .service('CacheSrv',function($rootScope) { 
 
     var service= {},
