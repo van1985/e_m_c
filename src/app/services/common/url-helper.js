@@ -5,7 +5,7 @@
 /**************************************************************************************************/
 
 angular.module('Services')
-    .service('CacheSrv',function($rootScope) { 
+    .service('UrlHelperSrv',function($rootScope,$location) { 
 
     var service= {},
         selectFilterKeysOptions = [
@@ -29,25 +29,6 @@ angular.module('Services')
     };
 
     function getGeographicalOptionsFilter(filterObject,value,parentId,optionsFilter){
-        //Only Geographical option
-        /*
-        // this hardcoded style is repeated in 3 methods
-        // consider change them too
-        // is higly brittle and harde to maintain
-
-        if (value==='ams' || value==='apj'|| value==='emea') {
-            return filterObject.filter.options[0];
-        }else
-        {
-            if (parentId ==='apj')
-                {return optionsFilter[1].apj;}
-            if (parentId ==='ams')
-                {return optionsFilter[1].ams;}
-            if (parentId ==='emea')
-                {return optionsFilter[1].emea;}
-        }*/
-
-        //////////////////
 
         var output = []; // set here whatever is the default for unmatched lookup
 
@@ -170,6 +151,59 @@ angular.module('Services')
             }
         }
         return filterObject;
+    };
+
+    service.parseURL = function(val) {
+        var result = null,
+            tmp = [];
+        location.search
+        .substr(1)
+            .split("&")
+            .forEach(function (item) {
+            tmp = item.split("=");
+            if (tmp[0] === val) { result = decodeURIComponent(tmp[1]);}
+        });
+        return result;
+    };
+
+    service.updateLocationURL=function(cascade_values,item,option,refreshPage){
+        if (cascade_values){
+            $location.search(item.id, cascade_values.toString());
+        }
+        else
+        {   
+            if (!refreshPage){
+            if (item.form_type === 'checkbox'){
+            
+            if ( window.location.search.indexOf(item.id) > 0) //concatenate
+            {
+                var str = this.parseURL(item.id); // get values from url for a item.id
+                if ( str.indexOf(option.id) < 0){ //Add new option
+                    str += ','+option.id;
+                    $location.search(item.id,str);
+                }
+                else //remove option
+                {
+                    str = str.replace(option.id+',','');
+                    str = str.replace(','+option.id,'');
+                    str = str.replace(option.id,'');
+                }
+                if (str===''){ //remove parameter
+                    $location.search(item.id,null);
+                }
+                else
+                {
+                    $location.search(item.id,str);
+                }
+            }
+            else //add new
+            {$location.search(item.id, option.id);}
+            }
+            else{
+                $location.search(item.id, option.id);
+            }
+            }
+        }
     };
 
     return service;           
