@@ -1,7 +1,7 @@
 
 angular.module('Controllers')
-.controller('MainCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','CacheSrv','$rootScope',
-	function($scope, $filter, $q, $timeout, $modal, getResource, $location,CacheSrv, $rootScope) {
+.controller('MainCtrl', ['$scope', '$filter', '$q', '$timeout', '$modal', 'getResource', '$location','UrlHelperSrv','$rootScope',
+	function($scope, $filter, $q, $timeout, $modal, getResource, $location,UrlHelperSrv, $rootScope) {
 
 
 
@@ -98,66 +98,14 @@ angular.module('Controllers')
 //Date: 02/07/2015
 // This method help to mantain URL from browser update with all the neccesary information
 /**************************************************************************************************/
-function parse(val) {
-    var result = null,
-        tmp = [];
-    location.search
-    //.replace ( "?", "" ) 
-    // this is better, there might be a question mark inside
-    .substr(1)
-        .split("&")
-        .forEach(function (item) {
-        tmp = item.split("=");
-        if (tmp[0] === val) { result = decodeURIComponent(tmp[1]);}
-    });
-    return result;
-}
 
-function updateLocationURL(cascade_values,item,option){
-	if (cascade_values){
-		$location.search(item.id, cascade_values.toString());
-	}
-	else
-	{   
-		if (!refreshPage){
-		if (item.form_type === 'checkbox'){
-		
-		if ( window.location.search.indexOf(item.id) > 0) //concatenate
-		{
-			var str = parse(item.id); // get values from url for a item.id
-			if ( str.indexOf(option.id) < 0){ //Add new option
-				str += ','+option.id;
-				$location.search(item.id,str);
-			}
-			else //remove option
-			{
-				str = str.replace(option.id+',','');
-				str = str.replace(','+option.id,'');
-				str = str.replace(option.id,'');
-			}
-			if (str===''){ //remove parameter
-				$location.search(item.id,null);
-			}
-			else
-			{
-				$location.search(item.id,str);
-			}
-		}
-		else //add new
-		{$location.search(item.id, option.id);}
-		}
-		else{
-			$location.search(item.id, option.id);
-		}
-		}
-	}
-}
+
 
 function removeCheckboxFilterURL(item,option){
 	//remove checkbox option from URL - Special case multiple checkbox
 	var values=window.location.search.replace('?',''),
 		result='';
-	values = parse(item.id);
+	values = UrlHelperSrv.parseURL(item.id);
 	values = values.split(',');
 
 	for (var z = 0, len = values.length; z < len; z++) {
@@ -246,7 +194,7 @@ console.log(option);
 //Author: Globant
 //Date: 02/07/2015
 
-updateLocationURL(cascade_values,this.item,this.option);
+UrlHelperSrv.updateLocationURL(cascade_values,this.item,this.option,refreshPage);
 /**************************************************************************************************/
 	};
 
@@ -856,11 +804,11 @@ var flagAddFilter = false;
 $scope.init = function(){
 	var deferred = $q.defer();
 	if ($scope.data.filters){
-		var keyFilters = CacheSrv.getKeysFilters();
+		var keyFilters = UrlHelperSrv.getKeysFilters();
 		for (var i = 0, len = keyFilters.length; i < len; i++) {
-			var option = parse(keyFilters[i]);
+			var option = UrlHelperSrv.parseURL(keyFilters[i]);
 			if (option){
-				var filterObject = CacheSrv.getFilter(keyFilters[i],option,$scope.data.filters);
+				var filterObject = UrlHelperSrv.getFilter(keyFilters[i],option,$scope.data.filters);
 				if (filterObject.filter){
 					refreshPage = true;
 					for (var j = 0, lenj = filterObject.option.length; j < lenj; j++) {
