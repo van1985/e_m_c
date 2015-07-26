@@ -3130,6 +3130,7 @@ button.close {
       line-height: 1.2em;
       color: #fff;
       cursor: pointer;
+      text-transform: uppercase;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
@@ -3144,8 +3145,7 @@ button.close {
   .filters .filters-primary .nav-tabs > li > a {
     text-transform: uppercase; }
   .filters .filters-secondary {
-    position: static;
-    text-transform: uppercase; }
+    position: static; }
     @media (min-width: 768px) {
       .filters .filters-secondary .nav-tabs {
         position: absolute;

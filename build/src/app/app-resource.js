@@ -15,7 +15,12 @@ angular.module('getResource', [
  */
 .factory('getResource', ['$resource', '$q', '$timeout', function($resource, $q, $timeout) {
 	return $resource(
-		' http://emc.dev.bluelevel.co.uk/Services/ServiceProviders.asmx/:resource/',
+		// BlueLevel Service (DEV environment)
+		'http://emc.dev.bluelevel.co.uk/Services/ServiceProviders.asmx/:resource/',
+		// EMC Service Production
+		//'https://cspdb.emc.com/Services/ServiceProviders.asmx/:resource/',
+		// EMC Service Development
+		//'http://cspappdev01//Services/ServiceProviders.asmx/:resource/',
 		{
 			callback: 'JSON_CALLBACK'
 		},

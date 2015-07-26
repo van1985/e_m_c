@@ -507,6 +507,7 @@
 			line-height: 1.2em;
 			color: #fff;
 			cursor: pointer;
+			text-transform: uppercase;
 			@include user-select(none);
 		}
 		> li.active > a,
@@ -530,7 +531,6 @@
 	}
 	.filters-secondary {
 		position: static;
-		text-transform: uppercase;
 
 		.nav-tabs {
 			@media (min-width: $screen-sm-min) {

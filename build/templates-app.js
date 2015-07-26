@@ -39,7 +39,7 @@ angular.module("home.tpl.html", []).run(["$templateCache", function($templateCac
     "				</div>\n" +
     "				<div class=\"form-group app-reset\">\n" +
     "					<button type=\"button\" class=\"btn\" ng-class=\"{'disabled': toggleReset()}\"\n" +
-    "						ng-disabled=\"toggleReset()\" ng-click=\"resetFilters('all'); toggleDetail(); resetUrl()\">\n" +
+    "						ng-disabled=\"toggleReset()\" ng-click=\"resetFilters('all'); toggleDetail(); resetUrl(); resetActiveCheckbox();\">\n" +
     "						<span class=\"sm-min\">{{data.labels.reset.lg}}</span>\n" +
     "						<span class=\"xs-max\">\n" +
     "							<span>{{data.labels.reset.lg}}</span>\n" +

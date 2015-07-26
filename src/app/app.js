@@ -51,103 +51,13 @@ angular.module('emc_service_providers', [
 
 
 
-	/* SECTION OF METHODS ADDED ON THE URL QUERY REFACTOR 
-	Surge - CSP Search Tool [Sprint °1] Task: B-37919 **/
-
-	// This function will get the filterParams on the URL to render specific search 
-
-
-
-	/* Listens to the locationChangeSuccess event,
-		once the event is emitted calls the function  
-
-	$scope.$on('$locationChangeSuccess', function(event) {
-		var query = $location.search();
-		var toShow;
-
-		for(var key in query){
-			var helper;
-
-			helper = $scope.getFiltersIdandOption(key,query[key]);
-			
-			if(helper[1].length>1){
-				for (var j = 0; j < helper[1].length; j++) {
-					$scope.addFilter(helper[0],helper[1][j]);
-				}
-			}else{
-				$scope.addFilter(helper[0],helper[1][0]);
-			}
-		}
-		//console.log(toShow);
-	});
-
-	/*  
-
-	$scope.getFiltersIdandOption = function(id,option){
-		var index,options, 
-			data = [];
-
-		$scope.data.filters.forEach(function(value,i,arr){
-			//console.log(arr[i].id);
-			if( arr[i].id == id){
-				data.push(arr[i]);
-				index = i;
-			}
-		});
-
-		options = option.split(',');
-		data.push([]);
-		$scope.data.filters[index].options.forEach(function(value,i,arr){
-			//console.log(arr[i].id);
-			for(var a = 0; a < options.length; a++){
-				if( arr[i].id == options[a]){
-					data[1].push(arr[i]);
-				}
-			}
-		});
-		return data;
-	};
-
-	$scope.updateUrl = function(filter, option){
-		if ( !_.isUndefined(filter) ) {
-			this.item   = filter;
-			this.option = option;
-		}
-
-		var query = $location.search(),
-			checkVal = "",
-			remove = false;
-
-			if(query[this.item.id]){
-				checkVal = query[this.item.id];
-			}
-			
-		if(this.item.form_type === "checkbox"){
-			if (checkVal.indexOf(this.option.id) >= 0) {
-				remove=true;
-				checkVal.replace(this.option.id,'').replace(',,',',');
-			}	
-			
-			if(checkVal === ""){
-				$location.search(this.item.id, this.option.id);
-			}else{
-				if (!remove) {
-					checkVal += ","+this.option.id;
-				}
-				$location.search(this.item.id, null);
-				$location.search(this.item.id, checkVal);
-			}
-		}
-	};
-*/
-	/* END OF SECTION **/
-
 	$scope.toggleOptions = function(action, filter_id) {
 		$scope.data.filtered.filters = $filter('toggleOptions')($scope, action, filter_id);
 		var transferObject={
 			data: $scope.data
 		};
 		$rootScope.$broadcast('updateCacheData', JSON.stringify(transferObject));
+		//updateCheckboxSstatus(); // Calling to this function to update checkmarks while copy/paste
 	};
 
 	$scope.applyFilters = function(action, filter_id) {
@@ -167,7 +77,7 @@ angular.module('emc_service_providers', [
 		selected.filters         = {};
 		selected.filters_display = [];
 		selected.option_desc     = {};
-		selected.filter_primary  = true;
+		selected.filter_primary  = null;
 
 		if (action === 'single') {
 			$scope.data.filtered.search = selected.search;
@@ -214,6 +124,7 @@ angular.module('emc_service_providers', [
 
 	$scope.resetUrl = function () {
 		$location.search('');
+		//disableCheckMarks();
 	};  
 /**************************************************************************************************/
 	
@@ -229,7 +140,7 @@ angular.module('emc_service_providers', [
 
 /**************************************************************************************************/
 //Update Location URL
-//Author: lvanden
+//Author: Globant
 //Date: 02/07/2015
 // This method help to mantain URL from browser update with all the neccesary information
 /**************************************************************************************************/
@@ -254,7 +165,9 @@ function updateLocationURL(cascade_values,item,option){
 	}
 	else
 	{   
+		if (!refreshPage){
 		if (item.form_type === 'checkbox'){
+		
 		if ( window.location.search.indexOf(item.id) > 0) //concatenate
 		{
 			var str = parse(item.id); // get values from url for a item.id
@@ -281,6 +194,7 @@ function updateLocationURL(cascade_values,item,option){
 		}
 		else{
 			$location.search(item.id, option.id);
+		}
 		}
 	}
 }
@@ -375,7 +289,7 @@ console.log(option);
 
 /**************************************************************************************************/
 //UpdateUrl
-//Author: lvanden
+//Author: Globant
 //Date: 02/07/2015
 
 updateLocationURL(cascade_values,this.item,this.option);
@@ -978,45 +892,54 @@ $location.search(filter_id, null);
 
 
 /**************************************************************************************************/
-// Author: lvanden
+// Author: Globant
 // Date: 02/07/2015
 // Init function declaration - This function is the responsible for load all the information from 
 // cache when the user refresh the page or copy/paste the link into another page
 /**************************************************************************************************/
-
+var refreshPage = false;
+var flagAddFilter = false;
 $scope.init = function(){
 	var deferred = $q.defer();
-	if ( $scope.data.filters){
-		var keyFilters=CacheSrv.getKeysFilters();
+	if ($scope.data.filters){
+		var keyFilters = CacheSrv.getKeysFilters();
 		for (var i = 0, len = keyFilters.length; i < len; i++) {
 			var option = parse(keyFilters[i]);
 			if (option){
 				var filterObject = CacheSrv.getFilter(keyFilters[i],option,$scope.data.filters);
 				if (filterObject.filter){
+					refreshPage = true;
 					for (var j = 0, lenj = filterObject.option.length; j < lenj; j++) {
-						$scope.addFilter(filterObject.filter, filterObject.option[j]);
+						$scope.addFilter(filterObject.filter, filterObject.option[j]); // u
 						if (filterObject.filter.form_type === 'checkbox'){
-							checkbox.push(filterObject);
+							flagAddFilter = true;
+							$scope.checkbox.push(filterObject);
+							flagAddFilter = false;
+							//updateCheckboxSstatus();
 						}
 					}
 				}
 			}
 		}
+		//updateCheckboxSstatus();
+
 	}
+	refreshPage=false;
 	deferred.resolve();
+	//updateCheckboxSstatus();
 	return deferred.promise;
 };
 
 
 /**************************************************************************************************/
-// Author: lvanden
+// Author: Globant
 // Date: 02/07/2015
 // Update css class checkbox (Active) & URL QueryString - refresh
 /**************************************************************************************************/
-var checkbox=[];
+$scope.checkbox=[];
 function updateCheckboxSstatus(){
-	for (var i=0, leni = checkbox.length; i < leni; i++){
-		var filterObject = checkbox[i];
+	for (var i=0, leni = $scope.checkbox.length; i < leni; i++){
+		var filterObject = $scope.checkbox[i];
 		for (var j = 0, lenj = filterObject.option.length; j < lenj; j++) {
 			if ( !jQuery('#'+filterObject.filter.id+'-'+filterObject.option[j].id).hasClass('active') ){
 				jQuery('#'+filterObject.filter.id+'-'+filterObject.option[j].id).addClass('active');
@@ -1027,9 +950,40 @@ function updateCheckboxSstatus(){
 		}	
 	}
 }
-angular.element(document).ready(function () {
-	updateCheckboxSstatus();	
-});
+
+/**************************************************************************************************/
+// Author: Globant
+// Date: 21/07/2015
+// Watches the $scope.checkbox variable at change
+/**************************************************************************************************/
+
+$scope.$watch('checkbox', function() {
+	if(!flagAddFilter){
+  updateCheckboxSstatus();
+ }
+}, true);
+
+/**************************************************************************************************/
+// Author: Globant
+// Date: 21/07/2015
+// Unchecks the checkbox on Reset Filter button  
+/**************************************************************************************************/
+
+function disableCheckMarks(){
+	//for (var i=0, leni = checkmarks.length; i < leni; i++){
+		//var filterObject = checkmarks[i];
+		//for (var j = 0, lenj = filterObject.option.length; j < lenj; j++) {
+			if ( jQuery('.checkbox').hasClass('active') ){
+				jQuery('.checkbox').removeClass('active');
+				flagAddFilter = true;
+				}
+    }
+		//}
+	//}
+/**************************************************************************************************/
+ $scope.resetActiveCheckbox = function(){
+  disableCheckMarks();
+};
 
 /**************************************************************************************************/
 
@@ -1064,14 +1018,14 @@ angular.element(document).ready(function () {
 			'filters':         {},
 			'filters_display': [],
 			'filters_options': {},
-			'filter_primary':  true,
+			'filter_primary':  null,
 			'filter_active':   null,
 			'option_desc':     {},
 			'search':          null
 		};
 
 /**************************************************************************************************/
-// Author: lvanden
+// Author: Globant
 // Date: 02/07/2015
 // Init Function - Copy/Paste link feature
 /**************************************************************************************************/
@@ -1079,11 +1033,13 @@ angular.element(document).ready(function () {
 		$scope.init().then(function(){
 			$scope.applyFilters();
 			$scope.setFilterCSS();
+			//updateCheckboxSstatus();
 		});
+
 	});
 	}
 /**************************************************************************************************/
-// Author: lvanden
+// Author: Globant
 // Date: 02/07/2015
 // Encapsulate Refresh in a function for reuse in other functions
 /**************************************************************************************************/

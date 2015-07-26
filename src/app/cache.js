@@ -1,5 +1,5 @@
 /**************************************************************************************************/
-// Author: lvanden
+// Author: Globant
 // Date: 02/07/2015
 //Cache Filter
 /**************************************************************************************************/
@@ -30,6 +30,11 @@ angular.module('appFilters')
 
     function getGeographicalOptionsFilter(filterObject,value,parentId,optionsFilter){
         //Only Geographical option
+        /*
+        // this hardcoded style is repeated in 3 methods
+        // consider change them too
+        // is higly brittle and harde to maintain
+
         if (value==='ams' || value==='apj'|| value==='emea') {
             return filterObject.filter.options[0];
         }else
@@ -40,7 +45,29 @@ angular.module('appFilters')
                 {return optionsFilter[1].ams;}
             if (parentId ==='emea')
                 {return optionsFilter[1].emea;}
+        }*/
+
+        //////////////////
+
+        var output = []; // set here whatever is the default for unmatched lookup
+
+        // zone (value is a zone name?)
+        if (optionsFilter[1].hasOwnProperty(value)){ // instead of comparison check for existance (value==='ams' || value==='apj'|| value==='emea')
+            output = optionsFilter[0];
         }
+
+        // country by zone (parent is a zone Name and it is in zones hash optionsFilter[1]?)
+        else if (optionsFilter[1].hasOwnProperty(parentId)){ // instead of comparison check for existance (parentId==='ams' || parentId==='apj'|| parentId==='emea')
+            output = optionsFilter[1][parentId];
+        }
+
+        // state by country (parent is a country Name and it is in contries hash optionsFilter[2]? )
+        else if (optionsFilter[2].hasOwnProperty(parentId)){ //
+            output = optionsFilter[2][parentId];
+        }
+
+        return output;
+
     }
 
     function getCloudHqLocationOptionsFilter(filterObject,value,parentId,optionsFilter){
@@ -124,6 +151,7 @@ angular.module('appFilters')
                         optionsFilter = getGeographicalOptionsFilter(filterObject,values[j],parentId,optionsFilter);
                         parentId = values[j];
                     }
+                    console.log(parentId);
                     //Only cloud hq location
                     if (filterObject.filter.id === 'cloud_hq_location'){
                         optionsFilter = getCloudHqLocationOptionsFilter(filterObject,values[j],parentId,optionsFilter);
