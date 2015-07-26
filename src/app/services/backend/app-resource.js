@@ -1,9 +1,7 @@
 /**
  * Web services factory
  */
-angular.module('getResource', [
-	'ngResource'
-])
+angular.module('getResource')
 
 /**
  * Fetches application data from BlueLevel backend.

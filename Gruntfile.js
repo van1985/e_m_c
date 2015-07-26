@@ -79,7 +79,7 @@ module.exports = function ( grunt ) {
 			build_appjs: {
 				files: [
 					{
-						src: [ '<%= app_files.js %>' ],
+						src: [ '<%= app_files.mainjs %>', '<%= app_files.js %>' ],
 						dest: '<%= build_dir %>/',
 						cwd: '.',
 						expand: true
@@ -211,7 +211,7 @@ module.exports = function ( grunt ) {
 	// The actual grunt server settings
     connect: {
       options: {
-        port: 9000,
+        port: 9001,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: 'localhost',
         livereload: 35729
@@ -377,7 +377,7 @@ module.exports = function ( grunt ) {
 				files: [
 					'<%= app_files.js %>'
 				],
-				tasks: [ 'jshint:src', 'copy:build_appjs' ]  // karma:unit:run
+				tasks: [ 'jshint:src', 'copy:build_appjs' ]  // karma:unit:run // karma:unit:run
 			},
 
 			/**
@@ -449,7 +449,7 @@ module.exports = function ( grunt ) {
 	 */
 	grunt.registerTask( 'build', [
 		'clean', 'html2js', 'jshint', 'sass:build', 'concat:build_css', 'copy:build_app_assets',
-		'copy:build_vendor_assets', 'copy:build_appjs', 'copy:build_vendorjs', 'index:build'
+		'copy:build_vendor_assets','copy:build_appjs', 'copy:build_vendorjs', 'index:build'
 		// 'karmaconfig', 'karma:continuous'
 	]);
 
